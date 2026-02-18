@@ -16,6 +16,8 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 
+#include <chrono>
+
 SDL_Window* g_window{};
 
 void LogSDLVersion(const std::string& message, int major, int minor, int patch)
@@ -91,16 +93,33 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 #ifndef __EMSCRIPTEN__
-	while (!m_quit)
-		RunOneFrame();
+	auto& input = InputManager::GetInstance();
+	auto& sceneManager = SceneManager::GetInstance();
+	auto& renderer = Renderer::GetInstance();
+
+	auto currentTime = std::chrono::system_clock::now();
+	float accumulator = 0.f;
+
+	constexpr float fixed_time_step = 1.0f / 60.0f;
+
+	while (!m_quit) {
+		const auto newTime = std::chrono::system_clock::now();
+		float frameTime = std::chrono::duration<float>(newTime - currentTime).count();
+		currentTime = newTime;
+
+		accumulator += frameTime;
+
+		m_quit = input.ProcessInput(); 
+
+		while (accumulator >= fixed_time_step) {
+			sceneManager.Update(); // TODO add delta time (frameTime)
+			accumulator -= fixed_time_step;
+		}
+
+		// Run Frame
+		renderer.Render();
+	}
 #else
 	emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif
-}
-
-void dae::Minigin::RunOneFrame()
-{
-	m_quit = !InputManager::GetInstance().ProcessInput();
-	SceneManager::GetInstance().Update();
-	Renderer::GetInstance().Render();
 }

@@ -5,7 +5,9 @@
 
 dae::GameObject::~GameObject() = default;
 
-void dae::GameObject::Update(){}
+void dae::GameObject::Update(float deltaTime){
+	// TODO add transform, components
+}
 
 void dae::GameObject::Render() const
 {
