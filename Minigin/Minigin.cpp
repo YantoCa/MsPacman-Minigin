@@ -112,9 +112,9 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		m_quit = !input.ProcessInput();
 
 		while (accumulator >= fixed_time_step) {
-			sceneManager.Update(accumulator); // TODO add delta time (frameTime)
 			accumulator -= fixed_time_step;
 		}
+			sceneManager.Update(frameTime); // left it out the loop and let FPS component handle it
 
 		// Run Frame
 		renderer.Render();
