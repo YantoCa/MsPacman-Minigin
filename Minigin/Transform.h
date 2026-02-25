@@ -8,10 +8,25 @@ namespace dae
 	class Transform final
 	{
 	public:
-		const glm::vec3& GetPosition() const { return m_position; }
-		void SetPosition(float x, float y, float z = 0);
-		void SetPosition(const glm::vec3& position);
+		explicit Transform(GameObject* owner = nullptr) : m_Owner(owner) {}
+
+		const glm::vec3& GetLocalPosition() const;
+		const glm::vec3& GetWorldPosition() const;
+
+		void SetLocalPosition(float x, float y, float z = 0);
+		void SetLocalPosition(const glm::vec3& position);
+
+		void SetWorldPosition(float x, float y, float z = 0);
+		void SetWorldPosition(const glm::vec3& position);
+
+		void SetPositionDirty();
 	private:
-		glm::vec3 m_position;
+		GameObject* m_Owner;
+
+		glm::vec3 m_LocalPosition{};
+		glm::vec3 m_WorldPosition{};
+		bool m_PositionIsDirty{ true };
+
+		void UpdateWorldPosition();
 	};
 }

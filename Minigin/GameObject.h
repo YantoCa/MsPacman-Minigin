@@ -12,26 +12,38 @@ namespace dae
 	class Texture2D;
 	class GameObject final
 	{
+	private:
 		Transform m_transform{};
 		std::vector<std::unique_ptr<Component>> m_Components{}; 
 
+		GameObject* m_Parent{ nullptr };
+		std::vector<GameObject*> m_Childeren{};
 	public:
 		void Render() const;
 		void Update(float deltaTime);
 		void FixedUpdate();
 
 		void SetTexture(const std::string& filename);
-		void SetPosition(float x, float y);
+		void SetPosition(float x, float y, float z = 0);
 
 		Transform& GetTransform() { return m_transform; };
 		const Transform& GetTransform() const { return m_transform; };
 
 		GameObject() = default;
-		~GameObject() = default;
+		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
+
+		// Parent-Child Functions
+		GameObject* GetParent() const;
+		void SetParent(GameObject* parent, bool keepWorldPosition);
+
+		size_t GetChildCount() const;
+		GameObject* GetChildAt(size_t index) const;
+		const std::vector<GameObject*>& GetChildren() const;
+		bool IsChildOf(const GameObject* potentialChild) const;
 
 		// Component Functions
 		template<typename T, typename... Args>
@@ -49,7 +61,7 @@ namespace dae
 
 			T* ptr = component.get();
 
-			m_Components.push_back(std::move(component));
+			m_Components.push_back(std::move(component)); 
 			return ptr;
 		}
 
@@ -73,8 +85,6 @@ namespace dae
 					}),
 				m_Components.end()
 			);
-
 		}
-
 	};
 }

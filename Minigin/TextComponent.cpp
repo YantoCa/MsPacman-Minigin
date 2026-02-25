@@ -25,7 +25,7 @@ namespace dae {
         if (!m_textTexture || !GetOwner())
             return;
 
-        const auto& worldPos = GetOwner()->GetTransform().GetPosition();
+        const auto& worldPos = GetOwner()->GetTransform().GetWorldPosition();
         Renderer::GetInstance().RenderTexture(*m_textTexture, worldPos.x, worldPos.y);
     }
 
