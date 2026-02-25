@@ -91,8 +91,39 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 #ifndef __EMSCRIPTEN__
-	while (!m_quit)
-		RunOneFrame();
+	auto& input = InputManager::GetInstance();
+	auto& renderer = Renderer::GetInstance();
+	auto& sceneManager = SceneManager::GetInstance();
+
+	auto currentTime = std::chrono::system_clock::now();
+	float accumulator = 0.f;
+
+	constexpr float fixed_time_step = 1.0f / 60.0f; // 60 fps
+
+	while (!m_quit) {
+		const auto newTime = std::chrono::system_clock::now();
+		float frameTime = std::chrono::duration<float>(newTime - currentTime).count();
+		currentTime = newTime;
+
+		accumulator += frameTime;
+
+		m_quit = !input.ProcessInput();
+
+		while (accumulator >= fixed_time_step) {
+			sceneManager.Update(accumulator); // TODO add delta time (frameTime)
+			accumulator -= fixed_time_step;
+		}
+
+		// Run Frame
+		renderer.Render();
+	}
+
+
+	// TODO add cleaning up the marked for deletion and remove it from the scene
+	// TODO You only implemented the fixed update loop, which we discussed is only needed for math sensitive operations like physics or networking. You just need a regular update, don't make this harder than it needs to be. Why did you remove the RunOneFrame?
+
+	//while (!m_quit)
+	//	RunOneFrame();
 #else
 	emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif
@@ -101,6 +132,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 void dae::Minigin::RunOneFrame()
 {
 	m_quit = !InputManager::GetInstance().ProcessInput();
-	SceneManager::GetInstance().Update();
+	//SceneManager::GetInstance().Update();
 	Renderer::GetInstance().Render();
 }
