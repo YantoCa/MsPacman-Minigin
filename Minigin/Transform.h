@@ -3,6 +3,8 @@
 
 namespace dae
 {
+	class GameObject;
+
 	class Transform final
 	{
 	public:

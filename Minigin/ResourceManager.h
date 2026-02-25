@@ -15,6 +15,8 @@ namespace dae
 		void Init(const std::filesystem::path& data);
 		std::shared_ptr<Texture2D> LoadTexture(const std::string& file);
 		std::shared_ptr<Font> LoadFont(const std::string& file, uint8_t size);
+
+		std::shared_ptr<Texture2D> CreateTextTexture(const std::string& text, std::shared_ptr<Font> font);
 	private:
 		friend class Singleton<ResourceManager>;
 		ResourceManager() = default;
