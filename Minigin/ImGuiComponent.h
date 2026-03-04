@@ -36,8 +36,8 @@ namespace dae {
         mutable std::vector<float> m_Durations3DAlt;
 
         mutable std::vector<float> m_CombinedDurations;
-        mutable bool m_HasRun3D{ false };
-        mutable bool m_HasRun3DAlt{ false };
+        //mutable bool m_HasRun3D{ false };
+        //mutable bool m_HasRun3DAlt{ false };
 
     };
 }
