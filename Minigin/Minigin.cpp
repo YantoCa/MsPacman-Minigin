@@ -93,39 +93,40 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 #ifndef __EMSCRIPTEN__
-	auto& input = InputManager::GetInstance();
-	auto& renderer = Renderer::GetInstance();
-	auto& sceneManager = SceneManager::GetInstance();
+	//auto& input = InputManager::GetInstance();
+	//auto& renderer = Renderer::GetInstance();
+	//auto& sceneManager = SceneManager::GetInstance();
 
-	auto currentTime = std::chrono::system_clock::now();
-	float accumulator = 0.f;
+	//auto currentTime = std::chrono::system_clock::now();
+	//float accumulator = 0.f;
 
-	constexpr float fixed_time_step = 1.0f / 60.0f; // 60 fps
+	//constexpr float fixed_time_step = 1.0f / 60.0f; // 60 fps
 
-	while (!m_quit) {
-		const auto newTime = std::chrono::system_clock::now();
-		float frameTime = std::chrono::duration<float>(newTime - currentTime).count();
-		currentTime = newTime;
+	//while (!m_quit) {
+	//	const auto newTime = std::chrono::system_clock::now();
+	//	float frameTime = std::chrono::duration<float>(newTime - currentTime).count();
+	//	currentTime = newTime;
 
-		accumulator += frameTime;
+	//	accumulator += frameTime;
 
-		m_quit = !input.ProcessInput();
+	//	m_quit = !input.ProcessInput();
 
-		while (accumulator >= fixed_time_step) {
-			accumulator -= fixed_time_step;
-		}
-			sceneManager.Update(frameTime); // left it out the loop and let FPS component handle it
+	//	while (accumulator >= fixed_time_step) {
+	//		accumulator -= fixed_time_step;
+	//	}
+	//		sceneManager.Update(frameTime); // left it out the loop and let FPS component handle it
 
-		// Run Frame
-		renderer.Render();
-	}
+	//	// Run Frame
+	//	renderer.Render();
+	//}
 
 
 	// TODO add cleaning up the marked for deletion and remove it from the scene
 	// TODO You only implemented the fixed update loop, which we discussed is only needed for math sensitive operations like physics or networking. You just need a regular update, don't make this harder than it needs to be. Why did you remove the RunOneFrame?
+	m_LastTime = std::chrono::high_resolution_clock::now();
 
-	//while (!m_quit)
-	//	RunOneFrame();
+	while (!m_quit)
+		RunOneFrame();
 #else
 	emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif
@@ -133,7 +134,13 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 void dae::Minigin::RunOneFrame()
 {
+	const auto currentTime = std::chrono::high_resolution_clock::now();
+	float deltaTime = std::chrono::duration<float>(currentTime - m_LastTime).count();
+	m_LastTime = currentTime;
+
 	m_quit = !InputManager::GetInstance().ProcessInput();
-	//SceneManager::GetInstance().Update();
+
+	SceneManager::GetInstance().Update(deltaTime);
+
 	Renderer::GetInstance().Render();
 }

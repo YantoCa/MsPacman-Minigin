@@ -14,6 +14,7 @@
 #include "TextComponent.h"
 #include "FPSComponent.h"
 #include "RotationComponent.h"
+#include "ImGuiComponent.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -60,6 +61,11 @@ static void load()
 	
 	scene.Add(std::move(rotating)); // if added to scene too early, you cant add childeren due to it becoming a nullptr after std::move()
 	scene.Add(std::move(rotating2));
+
+	// ImGui 
+	auto gui = std::make_unique<dae::GameObject>();
+	gui->AddComponent<dae::ImGuiComponent>();
+	scene.Add(std::move(gui));
 }
 
 int main(int, char*[]) {
