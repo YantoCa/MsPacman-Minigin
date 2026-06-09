@@ -15,6 +15,8 @@
 #include "FPSComponent.h"
 #include "RotationComponent.h"
 #include "ImGuiComponent.h"
+#include "DisplayPointsComponent.h"
+#include "PointsComponent.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -29,10 +31,19 @@ static void load()
 	go->AddComponent<dae::RenderComponent>("background.png");
 	scene.Add(std::move(go));
 
-	// DAE logo
+	// DAE logo (temp placeholder player)
 	go = std::make_unique<dae::GameObject>();
 	go->AddComponent<dae::RenderComponent>("logo.png");
 	go->SetPosition(358, 180);
+	go->AddComponent<dae::PointsComponent>();
+
+	// Display points
+	auto DispalyPoints = std::make_unique<dae::GameObject>();
+	DispalyPoints->SetPosition(10.f, 325.f);
+	DispalyPoints->AddComponent<dae::TextComponent>("", font);
+	DispalyPoints->AddComponent<dae::DisplayPointsComponent>(go.get());
+	scene.Add(std::move(DispalyPoints));
+
 	scene.Add(std::move(go));
 
 	// Text
@@ -47,20 +58,22 @@ static void load()
 	to->AddComponent<dae::FPSComponent>(font);
 	scene.Add(std::move(to));
 
-	// Rotating objects
-	auto rotating = std::make_unique<dae::GameObject>();
-	rotating->AddComponent<dae::RenderComponent>("logo.png");
-	rotating->SetPosition(200, 300);
-	rotating->AddComponent<dae::RotationComponent>(270.0f, false);
+	//// Rotating objects
+	//auto rotating = std::make_unique<dae::GameObject>();
+	//rotating->AddComponent<dae::RenderComponent>("logo.png");
+	//rotating->SetPosition(200, 300);
+	//rotating->AddComponent<dae::RotationComponent>(270.0f, false);
 
-	auto rotating2 = std::make_unique<dae::GameObject>();
-	rotating2->AddComponent<dae::RenderComponent>("logo.png");
-	rotating2->SetPosition(100, 0);
-	rotating2->SetParent(rotating.get(), false);
-	rotating2->AddComponent<dae::RotationComponent>(360.0f, true);
-	
-	scene.Add(std::move(rotating)); // if added to scene too early, you cant add childeren due to it becoming a nullptr after std::move()
-	scene.Add(std::move(rotating2));
+	//auto rotating2 = std::make_unique<dae::GameObject>();
+	//rotating2->AddComponent<dae::RenderComponent>("logo.png");
+	//rotating2->SetPosition(100, 0);
+	//rotating2->SetParent(rotating.get(), false);
+	//rotating2->AddComponent<dae::RotationComponent>(360.0f, true);
+	//
+	//scene.Add(std::move(rotating)); // if added to scene too early, you cant add childeren due to it becoming a nullptr after std::move()
+	//scene.Add(std::move(rotating2));
+
+
 
 	// ImGui 
 	auto gui = std::make_unique<dae::GameObject>();

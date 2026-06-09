@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "Transform.h"
+#include "TransformComponent.h"
 
 #include <vector>
 #include "Component.h"
@@ -13,7 +13,7 @@ namespace dae
 	class GameObject final
 	{
 	private:
-		Transform m_transform{};
+		TransformComponent m_transform{this};
 		std::vector<std::unique_ptr<Component>> m_Components{}; 
 
 		GameObject* m_Parent{ nullptr };
@@ -26,8 +26,8 @@ namespace dae
 		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y, float z = 0);
 
-		Transform& GetTransform() { return m_transform; };
-		const Transform& GetTransform() const { return m_transform; };
+		TransformComponent& GetTransform() { return m_transform; };
+		const TransformComponent& GetTransform() const { return m_transform; };
 
 		GameObject() = default;
 		~GameObject();

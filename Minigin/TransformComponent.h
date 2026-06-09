@@ -1,17 +1,19 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "Component.h"
 
 namespace dae
 {
 	class GameObject;
 
-	class Transform final
+	class TransformComponent final : public Component
 	{
 	public:
-		explicit Transform(GameObject* owner = nullptr) : m_Owner(owner) {}
+		TransformComponent(GameObject* owner, glm::vec3 const& position = { 0, 0, 0 });
+		~TransformComponent() override = default;
 
 		const glm::vec3& GetLocalPosition() const;
-		const glm::vec3& GetWorldPosition() const;
+		const glm::vec3& GetWorldPosition();
 
 		void SetLocalPosition(float x, float y, float z = 0);
 		void SetLocalPosition(const glm::vec3& position);
@@ -20,9 +22,7 @@ namespace dae
 		void SetWorldPosition(const glm::vec3& position);
 
 		void SetPositionDirty();
-	private:
-		GameObject* m_Owner;
-
+	private: 
 		glm::vec3 m_LocalPosition{};
 		glm::vec3 m_WorldPosition{};
 		bool m_PositionIsDirty{ true };

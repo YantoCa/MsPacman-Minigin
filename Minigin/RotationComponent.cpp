@@ -1,6 +1,6 @@
 #include "RotationComponent.h"
 #include "GameObject.h"
-#include "Transform.h"
+#include "TransformComponent.h"
 #include <cmath>
 
 namespace dae

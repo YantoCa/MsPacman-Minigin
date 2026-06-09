@@ -5,7 +5,7 @@ namespace dae {
 
 	class Component {
 	public:
-		explicit Component(GameObject* owner) : m_Owner(owner) {} // constructor
+		explicit Component(GameObject* pOwner) : m_pOwner(pOwner) {} 
 		virtual ~Component() = default;
 
 		Component(const Component&) = delete;
@@ -17,9 +17,9 @@ namespace dae {
 		virtual void Render() const {}
 		virtual void FixedUpdate() {}
 
-		GameObject* GetOwner() const { return m_Owner; }
-
 	protected:
-		GameObject* m_Owner;
+		GameObject* GetOwner() const { return m_pOwner; }
+	private:
+		GameObject* m_pOwner;
 	};
 }
