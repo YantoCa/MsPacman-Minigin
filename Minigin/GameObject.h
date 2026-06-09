@@ -18,6 +18,8 @@ namespace dae
 
 		GameObject* m_Parent{ nullptr };
 		std::vector<GameObject*> m_Childeren{};
+
+		bool m_isMarkedForDeletion = false;
 	public:
 		void Render() const;
 		void Update(float deltaTime);
@@ -44,6 +46,11 @@ namespace dae
 		GameObject* GetChildAt(size_t index) const;
 		const std::vector<GameObject*>& GetChildren() const;
 		bool IsChildOf(const GameObject* potentialChild) const;
+
+		// Safe Deletion
+		void MarkForDeletion() { m_isMarkedForDeletion = true;  // Mark itself for destruction
+								for (auto* child : m_Childeren) { child->MarkForDeletion(); } }; // and its children							
+		bool IsMarkedForDeletion() const { return m_isMarkedForDeletion; }
 
 		// Component Functions
 		template<typename T, typename... Args>
