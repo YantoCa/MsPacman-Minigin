@@ -26,8 +26,8 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Minigin/SceneManager.cpp
   
   Minigin/Texture2D.cpp
-  "Minigin/TransformComponent.cpp"
-  "Minigin/RenderComponent.cpp" "Minigin/TextComponent.cpp" "Minigin/FPSComponent.cpp" "Minigin/RotationComponent.cpp" "Minigin/ImGuiComponent.cpp" "Minigin/EventSystem.cpp" "Minigin/PointsComponent.cpp" "Minigin/DisplayPointsComponent.cpp" "Minigin/Command.cpp")
+  "Minigin/Components/TransformComponent.cpp"
+  "Minigin/Components/RenderComponent.cpp" "Minigin/Components/TextComponent.cpp" "Minigin/Components/FPSComponent.cpp" "Minigin/Components/RotationComponent.cpp" "Minigin/Components/ImGuiComponent.cpp" "Minigin/EventSystem.cpp" "Minigin/Components/PointsComponent.cpp" "Minigin/Components/DisplayPointsComponent.cpp" "Minigin/Command.cpp")
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)

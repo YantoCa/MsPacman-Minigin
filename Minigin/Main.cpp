@@ -9,14 +9,14 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Scene.h"
-#include "RenderComponent.h"
+#include "Components/RenderComponent.h"
 #include "GameObject.h"
-#include "TextComponent.h"
-#include "FPSComponent.h"
-#include "RotationComponent.h"
-#include "ImGuiComponent.h"
-#include "DisplayPointsComponent.h"
-#include "PointsComponent.h"
+#include "Components/TextComponent.h"
+#include "Components/FPSComponent.h"
+#include "Components/RotationComponent.h"
+#include "Components/ImGuiComponent.h"
+#include "Components/DisplayPointsComponent.h"
+#include "Components/PointsComponent.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;

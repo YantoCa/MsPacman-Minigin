@@ -1,7 +1,7 @@
 #include "Command.h"
 
 #include "GameObject.h"
-#include "PointsComponent.h"
+#include "Components/PointsComponent.h"
 
 namespace dae {
 	// Add Points Command

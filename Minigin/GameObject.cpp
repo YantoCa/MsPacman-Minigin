@@ -1,6 +1,6 @@
 #include "GameObject.h"
-#include "Component.h"
-#include "RenderComponent.h"
+#include "Components/Component.h"
+#include "Components/RenderComponent.h"
 
 #include <stdexcept> // TODO for std::outofrange
 

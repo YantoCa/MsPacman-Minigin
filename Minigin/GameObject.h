@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "TransformComponent.h"
+#include "Components/TransformComponent.h"
 
 #include <vector>
-#include "Component.h"
+#include "Components/Component.h"
 
 
 namespace dae
