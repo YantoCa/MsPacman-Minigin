@@ -37,7 +37,11 @@ void MsPacman::Initialize() {
 		p1->AddComponent<dae::MovementComponent>();
 
 		// Bind bindings to player 1
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(*p1, 1), dae::KeyState::OnHold)); 
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<dae::AddPointsCommand>(*p1, 1), dae::KeyState::OnPress)); 
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ 0.f, -1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_S, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ 0.f, 1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ -1.f, 0.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_D, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ 1.f, 0.f, 0.f }), dae::KeyState::OnHold));
 
 		// Observers Player 1
 			// Display points UI
@@ -62,7 +66,11 @@ void MsPacman::Initialize() {
 
 		// Bind bindings to player 2
 		auto& controller0 = input.AddController(0);
-		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(*p2, 1), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(*p2, 1), dae::KeyState::OnPress));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_UP, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ 0.f, -1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_DOWN, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ 0.f, 1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_LEFT, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ -1.f, 0.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_RIGHT, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ 1.f, 0.f, 0.f }), dae::KeyState::OnHold));
 
 		// Observers Player 2
 			// Display points UI
