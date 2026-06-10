@@ -39,7 +39,7 @@ namespace dae
 #endif
 		}
 
-		bool IsDown(ControllerButton button) const
+		bool IsDown([[maybe_unused]] ControllerButton button) const
 		{
 #ifdef _WIN32
 			return m_CurrentState.Gamepad.wButtons & static_cast<WORD>(button);
@@ -48,7 +48,7 @@ namespace dae
 #endif
 		}
 
-		bool IsUp(ControllerButton button) const
+		bool IsUp([[maybe_unused]] ControllerButton button) const
 		{
 #ifdef _WIN32
 			return (m_ButtonsChangesThisFrame & static_cast<WORD>(button)) && !(m_CurrentState.Gamepad.wButtons & static_cast<WORD>(button));
@@ -57,7 +57,7 @@ namespace dae
 #endif
 		}
 
-		bool IsPressed(ControllerButton button) const
+		bool IsPressed([[maybe_unused]] ControllerButton button) const
 		{
 #ifdef _WIN32
 			return (m_ButtonsChangesThisFrame & static_cast<WORD>(button)) && (m_CurrentState.Gamepad.wButtons & static_cast<WORD>(button));
