@@ -7,6 +7,7 @@
 #include "InputManager.h"
 
 #include "KeyboardBinding.h"
+#include "ControllerBinding.h"
 
 #include "Components/RenderComponent.h"
 #include "Components/TextComponent.h"
@@ -34,7 +35,10 @@ void MsPacman::Initialize() {
 	go->AddComponent<dae::PointsComponent>();
 	
 	// Bind bindings to play
-	input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
+	//input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
+	
+	auto& controller0 = input.AddController(0);
+	input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
 	
 
 	// Display points
