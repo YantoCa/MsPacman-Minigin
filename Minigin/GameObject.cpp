@@ -5,6 +5,23 @@
 #include <stdexcept> // TODO for std::outofrange
 
 namespace dae {
+    GameObject::GameObject() {
+        AddComponent<TransformComponent>();
+    }
+
+    GameObject::~GameObject() {
+        for (auto* child : m_Childeren) {
+            if(child)
+                child->m_Parent = nullptr;
+        }
+
+        m_Childeren.clear();
+        if (m_Parent) {
+            m_Parent->RemoveChild(this);
+            m_Parent = nullptr;
+        }
+    }
+
     void GameObject::Update(float deltaTime)
     {
         for (const auto& component : m_Components)
@@ -29,17 +46,18 @@ namespace dae {
         }
     }
 
-    void GameObject::SetPosition(float x, float y, float z) {
-        m_transform.SetLocalPosition({ x,y, z });
+    TransformComponent& GameObject::GetTransform()
+    {
+        return *GetComponent<TransformComponent>();
     }
 
-    GameObject::~GameObject() {
-        for (auto* child : m_Childeren) {
-            child->m_Parent = nullptr;
-        }
+    const TransformComponent& GameObject::GetTransform() const
+    {
+        return *GetComponent<TransformComponent>();
+    }
 
-        m_Childeren.clear();
-        SetParent(nullptr, false);
+    void GameObject::SetPosition(float x, float y, float z) {
+        GetTransform().SetLocalPosition({x,y, z});
     }
 
     GameObject* GameObject::GetParent() const { return m_Parent; }
@@ -50,33 +68,49 @@ namespace dae {
         if (parent == this || m_Parent == parent || IsChildOf(parent))
             return;
 
-        glm::vec3 worldPos = m_transform.GetWorldPosition();
+        TransformComponent& transform = GetTransform();
+        glm::vec3 worldPos = transform.GetWorldPosition();
 
         // Remove from previous parent
         if (m_Parent)
         {
-            auto& siblings = m_Parent->m_Childeren;
-            siblings.erase(std::remove(siblings.begin(), siblings.end(), this), siblings.end());
+            m_Parent->RemoveChild(this);
         }
 
         m_Parent = parent;
 
         if (m_Parent)
         {
-            m_Parent->m_Childeren.push_back(this);
+            m_Parent->AddChild(this);
 
             if (keepWorldPosition)
             {
                 glm::vec3 parentWorld = m_Parent->GetTransform().GetWorldPosition();
-                m_transform.SetLocalPosition(worldPos - parentWorld);
+                transform.SetLocalPosition(worldPos - parentWorld);
             }
         }
         else
         {
-            m_transform.SetLocalPosition(worldPos);
+            transform.SetLocalPosition(worldPos);
         }
 
-        m_transform.SetPositionDirty();
+        transform.SetPositionDirty();
+    }
+
+    void GameObject::AddChild(GameObject* child)
+    {
+        if (!child) return;
+         
+        if (std::find(m_Childeren.begin(), m_Childeren.end(), child) == m_Childeren.end())
+        {
+            m_Childeren.push_back(child);
+        }
+    }
+
+    void GameObject::RemoveChild(GameObject* child)
+    {
+        if (!child) return;
+        m_Childeren.erase(std::remove(m_Childeren.begin(), m_Childeren.end(), child), m_Childeren.end());
     }
 
     size_t GameObject::GetChildCount() const { return m_Childeren.size(); };
@@ -98,7 +132,15 @@ namespace dae {
     }
 
     void GameObject::MarkForDeletion(){
+        if (m_isMarkedForDeletion) return;
+
         m_isMarkedForDeletion = true;  // Mark itself for destruction
+
+        if (m_Parent)
+        {
+            m_Parent->RemoveChild(this);
+            m_Parent = nullptr;
+        }
 
         for (auto* child : m_Childeren) {
             child->MarkForDeletion(); // and its children	

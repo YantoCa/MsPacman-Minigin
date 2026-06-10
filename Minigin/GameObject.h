@@ -12,8 +12,7 @@ namespace dae
 	class Texture2D;
 	class GameObject final
 	{
-	private:
-		TransformComponent m_transform{*this};
+	private: 
 		std::vector<std::unique_ptr<Component>> m_Components{}; 
 
 		GameObject* m_Parent{ nullptr };
@@ -25,13 +24,13 @@ namespace dae
 		void Update(float deltaTime);
 		void FixedUpdate();
 
-		void SetTexture(const std::string& filename);
+		//void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y, float z = 0);
 
-		TransformComponent& GetTransform() { return m_transform; };
-		const TransformComponent& GetTransform() const { return m_transform; };
+		TransformComponent& GetTransform();
+		const TransformComponent& GetTransform() const;
 
-		GameObject() = default;
+		GameObject();
 		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -66,7 +65,7 @@ namespace dae
 			auto component = std::make_unique<T>(*this, std::forward<Args>(args)...); 
 
 			T* ptr = component.get();
-
+//
 			m_Components.push_back(std::move(component)); 
 			return ptr;
 		}
@@ -92,5 +91,9 @@ namespace dae
 				m_Components.end()
 			);
 		}
+
+	private:
+		void AddChild(GameObject* child);
+		void RemoveChild(GameObject* child);
 	};
 }
