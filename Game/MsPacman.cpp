@@ -35,11 +35,7 @@ void MsPacman::Initialize() {
 	go->AddComponent<dae::PointsComponent>();
 	
 	// Bind bindings to play
-	//input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
-	
-	auto& controller0 = input.AddController(0);
-	input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
-	
+	input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnHold));
 
 	// Display points
 	auto DispalyPoints = std::make_unique<dae::GameObject>();
@@ -49,6 +45,25 @@ void MsPacman::Initialize() {
 	scene.Add(std::move(DispalyPoints));
 
 	scene.Add(std::move(go));
+
+		go = std::make_unique<dae::GameObject>();
+		go->AddComponent<dae::RenderComponent>("logo.png");
+		go->SetPosition(358, 180);
+		go->AddComponent<dae::PointsComponent>();
+
+		// Bind bindings to play
+		auto& controller0 = input.AddController(0);
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
+
+
+		// Display points
+		 DispalyPoints = std::make_unique<dae::GameObject>();
+		DispalyPoints->SetPosition(10.f, 375.f);
+		DispalyPoints->AddComponent<dae::TextComponent>("", font);
+		DispalyPoints->AddComponent<dae::DisplayPointsComponent>(go.get());
+		scene.Add(std::move(DispalyPoints));
+
+		scene.Add(std::move(go));
 
 	// Text
 	auto to = std::make_unique<dae::GameObject>();

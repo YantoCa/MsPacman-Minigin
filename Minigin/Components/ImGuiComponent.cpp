@@ -34,7 +34,7 @@ public:
 
 namespace dae {
 
-    ImGuiComponent::ImGuiComponent(GameObject* owner, const int exercise)
+    ImGuiComponent::ImGuiComponent(GameObject& owner, const int exercise)
         : Component(owner) {
         m_Exercise = exercise;
         m_WindowTitle = "Exercise #" + std::to_string(exercise);

@@ -36,7 +36,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   "Minigin/Components/PointsComponent.cpp" 
   "Minigin/Components/DisplayPointsComponent.cpp" 
   "Minigin/Command.cpp" 
-  "Game/MsPacman.cpp" "Minigin/Bindings/KeyboardBinding.cpp" "Minigin/Bindings/Gamepad.cpp" "Minigin/Bindings/ControllerBinding.cpp")
+  "Game/MsPacman.cpp" "Minigin/Bindings/KeyboardBinding.cpp" "Minigin/Bindings/Gamepad.cpp" "Minigin/Bindings/ControllerBinding.cpp" "Minigin/Components/MovementComponent.cpp")
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)

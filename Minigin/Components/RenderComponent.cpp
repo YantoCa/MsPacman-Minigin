@@ -4,7 +4,7 @@
 #include "GameObject.h"
 
 namespace dae {
-    RenderComponent::RenderComponent(GameObject* owner, const std::string& filename)
+    RenderComponent::RenderComponent(GameObject& owner, const std::string& filename)
         : Component(owner)
     {
         SetTexture(filename);

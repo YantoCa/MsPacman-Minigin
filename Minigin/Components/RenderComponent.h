@@ -6,9 +6,9 @@
 namespace dae {
 	class Texture2D;
 
-	class RenderComponent : public Component {
+	class RenderComponent final : public Component {
 	public: 
-		RenderComponent(GameObject* owner, const std::string& filename);
+		RenderComponent(GameObject& owner, const std::string& filename);
 		void Render() const override;
 		
 		void SetTexture(const std::string& filename);

@@ -6,9 +6,9 @@
 #include "GameObject.h"
 
 namespace dae {
-	class DisplayPointsComponent : public Component {
+	class DisplayPointsComponent final : public Component {
 	public:
-		DisplayPointsComponent(GameObject* owner, GameObject* player);
+		DisplayPointsComponent(GameObject& owner, GameObject* player);
 
 		void OnPointsChanged();
 	private:

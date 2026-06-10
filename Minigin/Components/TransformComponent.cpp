@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 namespace dae {
-	TransformComponent::TransformComponent(GameObject* owner, glm::vec3 const& position)
+	TransformComponent::TransformComponent(GameObject& owner, glm::vec3 const& position)
 		: Component(owner), m_LocalPosition{ position }, m_WorldPosition{}
 	{ }
 

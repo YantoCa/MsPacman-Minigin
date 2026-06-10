@@ -3,10 +3,10 @@
 
 namespace dae
 {
-    class RotationComponent : public Component
+    class RotationComponent final : public Component
     {
     public:
-        RotationComponent(GameObject* owner, float speed = 90.0f, float radius = 30.0f);
+        RotationComponent(GameObject& owner, float speed = 90.0f, float radius = 30.0f);
 
         void Update(float deltaTime) override;
 

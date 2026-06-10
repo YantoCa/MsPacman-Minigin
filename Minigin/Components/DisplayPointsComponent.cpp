@@ -1,10 +1,10 @@
 #include "DisplayPointsComponent.h"
 
 namespace dae {
-	DisplayPointsComponent::DisplayPointsComponent(GameObject* owner, GameObject* player)
+	DisplayPointsComponent::DisplayPointsComponent(GameObject& owner, GameObject* player)
         : Component(owner), m_Player(player)
     {
-        m_TextComponent = owner->GetComponent<TextComponent>();
+        m_TextComponent = GetOwner()->GetComponent<TextComponent>();
         m_PointsComponent = player->GetComponent<PointsComponent>();
 
         UpdateText();

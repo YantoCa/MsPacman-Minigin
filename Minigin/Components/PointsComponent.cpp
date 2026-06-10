@@ -3,7 +3,7 @@
 
 namespace dae
 {
-    PointsComponent::PointsComponent(GameObject* owner)
+    PointsComponent::PointsComponent(GameObject& owner)
         : Component(owner), m_Score(0)
     {
     }

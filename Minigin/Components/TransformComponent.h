@@ -9,7 +9,7 @@ namespace dae
 	class TransformComponent final : public Component
 	{
 	public:
-		TransformComponent(GameObject* owner, glm::vec3 const& position = { 0, 0, 0 });
+		TransformComponent(GameObject& owner, glm::vec3 const& position = { 0, 0, 0 });
 		~TransformComponent() override = default;
 
 		const glm::vec3& GetLocalPosition() const;

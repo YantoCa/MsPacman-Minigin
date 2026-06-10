@@ -8,7 +8,7 @@ namespace dae
     constexpr float PI = 3.14f;
     constexpr float DEG_TO_RAD = PI / 180.0f;
 
-    RotationComponent::RotationComponent(GameObject* owner, float speed, float radius)
+    RotationComponent::RotationComponent(GameObject& owner, float speed, float radius)
         : Component(owner), m_rotationSpeed(speed), m_radius(radius)
     {
     }

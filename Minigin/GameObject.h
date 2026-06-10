@@ -13,7 +13,7 @@ namespace dae
 	class GameObject final
 	{
 	private:
-		TransformComponent m_transform{this};
+		TransformComponent m_transform{*this};
 		std::vector<std::unique_ptr<Component>> m_Components{}; 
 
 		GameObject* m_Parent{ nullptr };
@@ -63,7 +63,7 @@ namespace dae
 			}
 
 			// Add to the vector
-			auto component = std::make_unique<T>(this, std::forward<Args>(args)...);
+			auto component = std::make_unique<T>(*this, std::forward<Args>(args)...); 
 
 			T* ptr = component.get();
 

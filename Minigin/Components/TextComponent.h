@@ -7,9 +7,9 @@ namespace dae {
 	class Font;
 	class Texture2D;
 
-	class TextComponent : public Component {
+	class TextComponent final : public Component {
 	public:
-		TextComponent(GameObject* owner, const std::string& text, std::shared_ptr<Font> font);
+		TextComponent(GameObject& owner, const std::string& text, std::shared_ptr<Font> font);
 		void Update(float) override;
 		void Render() const override;
 

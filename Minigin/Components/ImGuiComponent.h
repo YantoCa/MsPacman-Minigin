@@ -5,9 +5,9 @@
 #include <vector>
 
 namespace dae {
-    class ImGuiComponent : public Component {
+    class ImGuiComponent final : public Component {
     public:
-        ImGuiComponent(GameObject* owner, const int exercise = 2);
+        ImGuiComponent(GameObject& owner, const int exercise = 2);
         void Update(float deltaTime) override;
         void Render() const override;
 

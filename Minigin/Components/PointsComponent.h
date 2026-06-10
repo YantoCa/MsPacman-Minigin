@@ -3,10 +3,10 @@
 
 namespace dae
 {
-    class PointsComponent : public Component
+    class PointsComponent final : public Component
     {
     public:
-        PointsComponent(GameObject* owner);
+        PointsComponent(GameObject& owner);
 
         void AddPoints(int amount);
         int GetScore() const;

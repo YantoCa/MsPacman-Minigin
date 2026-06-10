@@ -5,12 +5,12 @@
 #include <iomanip>
 #include <algorithm> 
 
-dae::FPSComponent::FPSComponent(GameObject* owner, std::shared_ptr<Font> font)
+dae::FPSComponent::FPSComponent(GameObject& owner, std::shared_ptr<Font> font)
     : Component(owner)
 {
-    m_TextComponent = owner->GetComponent<TextComponent>();
+    m_TextComponent = GetOwner()->GetComponent<TextComponent>();
 
-    if (!m_TextComponent) m_TextComponent = owner->AddComponent<TextComponent>("FPS: 0", font);
+    if (!m_TextComponent) m_TextComponent = GetOwner()->AddComponent<TextComponent>("FPS: 0", font);
 
 }
 

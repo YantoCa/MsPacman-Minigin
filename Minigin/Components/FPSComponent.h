@@ -3,9 +3,9 @@
 #include "TextComponent.h"
 
 namespace dae {
-	class FPSComponent : public Component {
+	class FPSComponent final : public Component {
 	public:
-		FPSComponent(GameObject* owner, std::shared_ptr<Font> font);
+		FPSComponent(GameObject& owner, std::shared_ptr<Font> font);
 
 		void Update(float deltaTime) override;
 	private:
