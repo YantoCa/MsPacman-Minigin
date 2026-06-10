@@ -13,31 +13,27 @@ namespace dae {
 	};
 
 	// Iterations of Command
+    class MoveCommand final : public Command {
+    public:
+        MoveCommand(GameObject& object, const glm::vec3& direction);
 
-    //// Bind points to keyboard currently and later on movement with a seperate component
-    // 
-    //class MoveCommand final : public Command {
-    //public:
-    //    MoveCommand(GameObject& object, const  glm::vec2& direction);
+        void Execute() override;
 
-    //    void Execute() override;
+    private: 
+        GameObject& m_Object;
 
-    //private: 
-    //    GameObject& m_Object;
-
-    //    glm::vec2 m_Direction;
-    //};
-    //
+        glm::vec3 m_Direction;
+    };
 
     // delete seperate
     class AddPointsCommand final : public Command
     {
     public:
-        AddPointsCommand(GameObject* player, int points);
+        AddPointsCommand(GameObject& player, int points);
 
         void Execute() override;
     private:
-        GameObject* m_Player;
+        GameObject& m_Player;
         int m_Points;
     };
 }

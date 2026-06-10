@@ -13,6 +13,7 @@
 #include "Components/TextComponent.h"
 #include "Components/FPSComponent.h"
 #include "Components/RotationComponent.h"
+#include "Components/MovementComponent.h"
 #include "Components/ImGuiComponent.h"
 #include "Components/DisplayPointsComponent.h"
 #include "Components/PointsComponent.h"
@@ -33,9 +34,12 @@ void MsPacman::Initialize() {
 	go->AddComponent<dae::RenderComponent>("logo.png");
 	go->SetPosition(358, 180);
 	go->AddComponent<dae::PointsComponent>();
+	go->AddComponent<dae::MovementComponent>();
 	
 	// Bind bindings to play
-	input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnHold));
+	//input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(*go, 1), dae::KeyState::OnHold));
+	input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::MoveCommand>(*go, glm::vec3{0, 1, 0}), dae::KeyState::OnPress));
+	//input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::MoveCommand>(*go, glm::vec3{0, 0, 0}), dae::KeyState::OnRelease));
 
 	// Display points
 	auto DispalyPoints = std::make_unique<dae::GameObject>();
@@ -53,7 +57,7 @@ void MsPacman::Initialize() {
 
 		// Bind bindings to play
 		auto& controller0 = input.AddController(0);
-		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(*go, 1), dae::KeyState::OnPress));
 
 
 		// Display points

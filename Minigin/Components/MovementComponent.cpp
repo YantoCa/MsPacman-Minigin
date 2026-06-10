@@ -24,6 +24,8 @@ namespace dae {
 		currentPosition += velocity * m_Speed * deltaTime;
 		 
 		transform.SetLocalPosition(currentPosition);
+
+		m_Direction = glm::vec3{ 0.0f, 0.0f, 0.0f }; // Reset so it doesnt move infinitely // TODO Delete maybe for arcadic feel later on.
 	}
 
 
