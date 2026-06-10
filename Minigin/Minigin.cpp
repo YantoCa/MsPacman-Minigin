@@ -56,7 +56,8 @@ void PrintSDLVersion()
 	LogSDLVersion("Linked with SDL_ttf ", SDL_VERSIONNUM_MAJOR(version), SDL_VERSIONNUM_MINOR(version),	SDL_VERSIONNUM_MICRO(version));
 }
 
-dae::Minigin::Minigin(const std::filesystem::path& dataPath)
+dae::Minigin::Minigin(const std::filesystem::path& dataPath, std::unique_ptr<Game> game)
+	: m_pGame{std::move(game)}
 {
 	PrintSDLVersion();
 	
@@ -89,40 +90,12 @@ dae::Minigin::~Minigin()
 	SDL_Quit();
 }
 
-void dae::Minigin::Run(const std::function<void()>& load)
+void dae::Minigin::Run()
 {
-	load();
+	if (m_pGame != nullptr) {
+		m_pGame->Initialize();
+	}
 #ifndef __EMSCRIPTEN__
-	//auto& input = InputManager::GetInstance();
-	//auto& renderer = Renderer::GetInstance();
-	//auto& sceneManager = SceneManager::GetInstance();
-
-	//auto currentTime = std::chrono::system_clock::now();
-	//float accumulator = 0.f;
-
-	//constexpr float fixed_time_step = 1.0f / 60.0f; // 60 fps
-
-	//while (!m_quit) {
-	//	const auto newTime = std::chrono::system_clock::now();
-	//	float frameTime = std::chrono::duration<float>(newTime - currentTime).count();
-	//	currentTime = newTime;
-
-	//	accumulator += frameTime;
-
-	//	m_quit = !input.ProcessInput();
-
-	//	while (accumulator >= fixed_time_step) {
-	//		accumulator -= fixed_time_step;
-	//	}
-	//		sceneManager.Update(frameTime); // left it out the loop and let FPS component handle it
-
-	//	// Run Frame
-	//	renderer.Render();
-	//}
-
-
-	// TODO add cleaning up the marked for deletion and remove it from the scene
-	// TODO You only implemented the fixed update loop, which we discussed is only needed for math sensitive operations like physics or networking. You just need a regular update, don't make this harder than it needs to be. Why did you remove the RunOneFrame?
 	m_LastTime = std::chrono::high_resolution_clock::now();
 
 	while (!m_quit)

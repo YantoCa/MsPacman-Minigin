@@ -3,16 +3,20 @@
 #include <functional>
 #include <filesystem>
 
+#include "Game.h" 
+
 namespace dae
-{
+{ 
 	class Minigin final
 	{
 		bool m_quit{};
 		std::chrono::high_resolution_clock::time_point m_LastTime{};
+		std::unique_ptr<Game> m_pGame{};
+
 	public:
-		explicit Minigin(const std::filesystem::path& dataPath);
+		explicit Minigin(const std::filesystem::path& dataPath, std::unique_ptr<Game> game);
 		~Minigin();
-		void Run(const std::function<void()>& load);
+		void Run();
 		void RunOneFrame();
 
 		Minigin(const Minigin& other) = delete;

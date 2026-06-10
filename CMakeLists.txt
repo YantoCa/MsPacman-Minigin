@@ -27,7 +27,16 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   
   Minigin/Texture2D.cpp
   "Minigin/Components/TransformComponent.cpp"
-  "Minigin/Components/RenderComponent.cpp" "Minigin/Components/TextComponent.cpp" "Minigin/Components/FPSComponent.cpp" "Minigin/Components/RotationComponent.cpp" "Minigin/Components/ImGuiComponent.cpp" "Minigin/EventSystem.cpp" "Minigin/Components/PointsComponent.cpp" "Minigin/Components/DisplayPointsComponent.cpp" "Minigin/Command.cpp")
+  "Minigin/Components/RenderComponent.cpp" 
+  "Minigin/Components/TextComponent.cpp" 
+  "Minigin/Components/FPSComponent.cpp" 
+  "Minigin/Components/RotationComponent.cpp" 
+  "Minigin/Components/ImGuiComponent.cpp" 
+  "Minigin/EventSystem.cpp" 
+  "Minigin/Components/PointsComponent.cpp" 
+  "Minigin/Components/DisplayPointsComponent.cpp" 
+  "Minigin/Command.cpp" 
+  "Game/MsPacman.cpp")
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -139,6 +148,7 @@ find_package(Steamworks QUIET)
 
 target_include_directories("${TARGET_NAME}" PUBLIC 
   ${CMAKE_SOURCE_DIR}/Minigin/
+  ${CMAKE_SOURCE_DIR}/Game/ # Tell cmake to also look into Game/ folder
   ${glm_SOURCE_DIR}
   ${sdl3_SOURCE_DIR}/include
   ${sdl3_image_SOURCE_DIR}/include

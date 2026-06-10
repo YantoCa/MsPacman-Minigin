@@ -96,4 +96,12 @@ namespace dae {
         }
         return false;
     }
+
+    void GameObject::MarkForDeletion(){
+        m_isMarkedForDeletion = true;  // Mark itself for destruction
+
+        for (auto* child : m_Childeren) {
+            child->MarkForDeletion(); // and its children	
+        }
+    }; 	
 }
