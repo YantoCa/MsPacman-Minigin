@@ -1,22 +1,19 @@
 #pragma once
-#include "Component.h"
-#include "EventSystem.h"
+#include "Component.h" 
 #include "TextComponent.h"
 #include "PointsComponent.h"
 #include "GameObject.h"
 
+#include "Observer.h"
+
 namespace dae {
-	class DisplayPointsComponent final : public Component {
+	class DisplayPointsComponent final : public Component, public Observer{
 	public:
-		DisplayPointsComponent(GameObject& owner, GameObject* player);
+		DisplayPointsComponent(GameObject& owner); 
+		~DisplayPointsComponent() override = default;
 
-		void OnPointsChanged();
-	private:
-		void UpdateText();
-
-		GameObject* m_Player;
-
-		TextComponent* m_TextComponent{ nullptr };
-		PointsComponent* m_PointsComponent{ nullptr };
+		void OnNotify(const GameObject& object, Event event) override;
+	private: 
+		TextComponent* m_pTextComponent{nullptr};
 	};
 }

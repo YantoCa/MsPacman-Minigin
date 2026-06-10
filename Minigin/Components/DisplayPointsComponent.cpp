@@ -1,25 +1,24 @@
-#include "DisplayPointsComponent.h"
+#include "DisplayPointsComponent.h" 
+#include "Components/Component.h"
+#include "Components/TextComponent.h" 
+#include "GameObject.h"  
+#include "Event.h"
 
 namespace dae {
-	DisplayPointsComponent::DisplayPointsComponent(GameObject& owner, GameObject* player)
-        : Component(owner), m_Player(player)
+	DisplayPointsComponent::DisplayPointsComponent(GameObject& owner)
+        : Component(owner)
     {
-        m_TextComponent = GetOwner()->GetComponent<TextComponent>();
-        m_PointsComponent = player->GetComponent<PointsComponent>();
-
-        UpdateText();
-
-        EventSystem::GetInstance().Subscribe("PointsChanged", [this]() { OnPointsChanged(); });
+        m_pTextComponent = GetOwner()->GetComponent<TextComponent>();
+        
     }
-
-	void DisplayPointsComponent::OnPointsChanged(){
-        if (m_PointsComponent) {
-            UpdateText();
+ 
+    void DisplayPointsComponent::OnNotify(const GameObject& object, Event event) {
+        if (event == Event::ScoreChanged) {
+            auto* pointsComp = object.GetComponent<PointsComponent>();
+            // Always safety check your pointers!
+            if (pointsComp && m_pTextComponent) {
+                m_pTextComponent->SetText("Score: " + std::to_string(pointsComp->GetScore()));
+            }
         }
-    }
-
-	void DisplayPointsComponent::UpdateText(){
-        if (m_TextComponent)
-            m_TextComponent->SetText("Score: " + std::to_string(m_PointsComponent->GetScore()));
     }
 }

@@ -1,9 +1,10 @@
 #pragma once
 #include "Component.h"
+#include "Subject.h"
 
 namespace dae
 {
-    class PointsComponent final : public Component
+    class PointsComponent final : public Component, public Subject
     {
     public:
         PointsComponent(GameObject& owner);

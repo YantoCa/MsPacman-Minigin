@@ -1,5 +1,5 @@
 #include "PointsComponent.h"
-#include "EventSystem.h"
+#include "Event.h"
 
 namespace dae
 {
@@ -11,8 +11,8 @@ namespace dae
     void PointsComponent::AddPoints(int amount)
     {
         m_Score += amount;
-
-        EventSystem::GetInstance().Dispatch("PointsChanged");
+        
+        Notify(*GetOwner(), Event::ScoreChanged);
     }
 
     int PointsComponent::GetScore() const
