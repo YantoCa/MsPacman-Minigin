@@ -5,7 +5,7 @@
 
 namespace dae {
 	// Add Points Command
-    AddPointsCommand::AddPointsCommand(std::shared_ptr<GameObject> player, int points)
+    AddPointsCommand::AddPointsCommand(GameObject* player, int points)
         : m_Player(player), m_Points(points) {
     }
 
@@ -18,7 +18,5 @@ namespace dae {
                 points->AddPoints(m_Points);
             }
         }
-    }
-
-    //
+    } 
 }

@@ -12,17 +12,18 @@ bool dae::InputManager::ProcessInput()
 		if (e.type == SDL_EVENT_QUIT) {
 			return false;
 		}
-		if (e.type == SDL_EVENT_KEY_DOWN) {
-			
-		}
-		if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-			
-		}
-		// etc...
+	}
 
-		//process event for IMGUI
-		ImGui_ImplSDL3_ProcessEvent(&e);
+	for (auto& binding : m_Bindings) {
+		binding->TryExecute();
 	}
 
 	return true;
+}
+
+void dae::InputManager::AddBinding(std::unique_ptr<Binding> binding) {
+	m_Bindings.emplace_back(std::move(binding));
+}
+void dae::InputManager::ClearBinding() {
+	m_Bindings.clear();
 }

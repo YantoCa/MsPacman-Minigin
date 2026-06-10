@@ -4,6 +4,9 @@
 #include "ResourceManager.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "InputManager.h"
+
+#include "KeyboardBinding.h"
 
 #include "Components/RenderComponent.h"
 #include "Components/TextComponent.h"
@@ -15,6 +18,8 @@
 
 void MsPacman::Initialize() {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
+	auto& input = dae::InputManager::GetInstance();
+
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
 	// Background
@@ -27,6 +32,10 @@ void MsPacman::Initialize() {
 	go->AddComponent<dae::RenderComponent>("logo.png");
 	go->SetPosition(358, 180);
 	go->AddComponent<dae::PointsComponent>();
+	
+	// Bind bindings to play
+	input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::AddPointsCommand>(go.get(), 1), dae::KeyState::OnPress));
+	
 
 	// Display points
 	auto DispalyPoints = std::make_unique<dae::GameObject>();
