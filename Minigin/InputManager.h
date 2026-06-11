@@ -3,6 +3,8 @@
 #include "Binding.h"
 #include "Gamepad.h"
 
+#include <vector>
+
 namespace dae
 {
 	class InputManager final : public Singleton<InputManager>
