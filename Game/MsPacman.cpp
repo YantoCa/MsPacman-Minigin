@@ -5,10 +5,14 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "InputManager.h"
+#include "ServiceLocator.h"
 
 #include "KeyboardBinding.h"
 #include "ControllerBinding.h"
 #include "Commands.h"
+
+#include "SDLSoundSystem.h"
+#include "LoggingSoundSystem.h"
 
 #include "Components/RenderComponent.h"
 #include "Components/TextComponent.h"
@@ -25,6 +29,15 @@ void MsPacman::Initialize() {
 	auto& input = dae::InputManager::GetInstance();
 
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
+
+	// Sound
+	auto realAudioSys = std::make_unique<dae::SDLSoundSystem>(); // using sdl
+
+	realAudioSys->LoadSound(0, "Data/Dummy_Sound.mp3");
+
+	auto decoratedSys = std::make_unique<dae::LoggingSoundSystem>(std::move(realAudioSys)); // wrapper 
+
+	dae::ServiceLocator::RegisterSoundSystem(std::move(decoratedSys)); 
 
 	// Background
 		auto bg = std::make_unique<dae::GameObject>();

@@ -11,6 +11,7 @@ else()
 endif() 
 
 include(FetchContent)
+
 # add glm
 find_package(glm CONFIG QUIET)
 if(NOT glm_FOUND)
@@ -82,6 +83,40 @@ if(NOT SDL3_ttf_FOUND)
   endif()
 endif()
 
+# SDL_mixer
+find_package(SDL3_mixer 3.2.0 CONFIG QUIET)
+if(NOT SDL3_mixer_FOUND)
+  if (WIN32)
+    FetchContent_Declare(
+      SDL3_mixer
+      URL  https://github.com/libsdl-org/SDL_mixer/releases/download/release-3.2.0/SDL3_mixer-devel-3.2.0-VC.zip
+      DOWNLOAD_NO_PROGRESS ON
+      DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads
+    )
+    FetchContent_MakeAvailable(SDL3_mixer)
+    list(PREPEND CMAKE_PREFIX_PATH "${sdl3_mixer_SOURCE_DIR}")
+    find_package(SDL3_mixer CONFIG REQUIRED)
+  else()
+    FetchContent_Declare(
+      SDL3_mixer
+      GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+      GIT_TAG release-3.2.0
+      GIT_SHALLOW TRUE
+      GIT_PROGRESS TRUE
+    )
+
+    set(SDL3MIXER_INSTALL OFF)
+
+    if(EMSCRIPTEN)
+      set(SDL3MIXER_VENDORED ON)
+      set(SDL3MIXER_OGG ON)
+      set(SDL3MIXER_MP3 ON)
+    endif()
+
+    FetchContent_MakeAvailable(SDL3_mixer)
+  endif()
+endif()
+
 # Dear ImGui
 FetchContent_Declare(
   imgui
@@ -128,6 +163,7 @@ add_library(minigin_lib STATIC
   Minigin/Scene.cpp
   Minigin/SceneManager.cpp
   Minigin/Texture2D.cpp 
+  Minigin/Subject.cpp 
   Minigin/Components/TransformComponent.cpp
 
   Minigin/Bindings/KeyboardBinding.cpp 
@@ -138,8 +174,10 @@ add_library(minigin_lib STATIC
   Minigin/Components/TextComponent.cpp 
   Minigin/Components/ImGuiComponent.cpp 
    
-  Minigin/Subject.cpp 
-)
+ "Minigin/Sound/SDLSoundSystem.cpp" 
+ "Minigin/Sound/LoggingSoundSystem.cpp" 
+ "Minigin/Sound/SoundEventQueue.cpp"
+   )
 
 target_compile_features(minigin_lib PUBLIC cxx_std_20)
 
@@ -147,6 +185,7 @@ target_include_directories(minigin_lib PUBLIC
   ${CMAKE_SOURCE_DIR}/Minigin
   ${CMAKE_SOURCE_DIR}/Minigin/Bindings  
   ${CMAKE_SOURCE_DIR}/Minigin/Components  
+  ${CMAKE_SOURCE_DIR}/Minigin/Sound  
   # ${CMAKE_SOURCE_DIR}/Game/ # Tell cmake to also look into Game/ folder
   
   #${glm_SOURCE_DIR}
@@ -160,6 +199,7 @@ target_include_directories(minigin_lib PUBLIC
 target_link_libraries(minigin_lib PUBLIC 
   SDL3::SDL3 
   SDL3_ttf::SDL3_ttf
+  SDL3_mixer::SDL3_mixer
   glm::glm
   imgui
   ${VLD_LIBRARIES}
@@ -229,6 +269,7 @@ elseif(WIN32)
   set(SDL_RUNTIME_DLLS
     SDL3::SDL3
     SDL3_ttf::SDL3_ttf
+    SDL3_mixer::SDL3_mixer
   )
 
   foreach(dllTarget IN LISTS SDL_RUNTIME_DLLS)

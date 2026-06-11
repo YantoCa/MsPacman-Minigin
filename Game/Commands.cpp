@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Components/PointsComponent.h"
 #include "Components/MovementComponent.h"
+
+#include "ServiceLocator.h"
  
 namespace game {
     // Add Points Command
@@ -15,6 +17,8 @@ namespace game {
         if (points)
         {
             points->AddPoints(m_Points);
+
+            dae::ServiceLocator::GetSoundSystem().PlaySound(0, 0.3f);
         }
     }
 
