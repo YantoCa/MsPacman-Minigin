@@ -9,7 +9,7 @@ namespace dae {
 
 	class TextComponent final : public Component {
 	public:
-		TextComponent(GameObject& owner, const std::string& text, std::shared_ptr<Font> font);
+		explicit TextComponent(GameObject& owner, const std::string& text, std::shared_ptr<Font> font);
 		void Update(float) override;
 		void Render() const override;
 

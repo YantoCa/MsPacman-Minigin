@@ -7,7 +7,7 @@
 namespace dae {
     class ImGuiComponent final : public Component {
     public:
-        ImGuiComponent(GameObject& owner, const int exercise = 2);
+        explicit ImGuiComponent(GameObject& owner, const int exercise = 2);
         void Update(float deltaTime) override;
         void Render() const override;
 

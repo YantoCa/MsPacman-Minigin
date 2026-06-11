@@ -8,7 +8,7 @@ namespace dae {
 
 	class RenderComponent final : public Component {
 	public: 
-		RenderComponent(GameObject& owner, const std::string& filename);
+		explicit RenderComponent(GameObject& owner, const std::string& filename);
 		void Render() const override;
 		
 		void SetTexture(const std::string& filename);

@@ -177,7 +177,7 @@ add_library(minigin_lib STATIC
  "Minigin/Sound/SDLSoundSystem.cpp" 
  "Minigin/Sound/LoggingSoundSystem.cpp" 
  "Minigin/Sound/SoundEventQueue.cpp"
-   )
+    "Minigin/Components/FSMComponent.cpp")
 
 target_compile_features(minigin_lib PUBLIC cxx_std_20)
 
