@@ -1,14 +1,17 @@
 #include "SDLSoundSystem.h"
-
 #include "SoundEventQueue.h"
 #include <SDL3_mixer/SDL_mixer.h>
 #include <map>
 #include <iostream> 
-
-#include <thread>
 #include <vector>
+#include <utility>
+
+#ifndef __EMSCRIPTEN__
+#include <thread>
+#endif
 
 namespace dae {
+    // Impl
     class SDLSoundSystem::SoundImpl {
     public:
         SoundImpl() {
@@ -18,15 +21,15 @@ namespace dae {
                 std::cerr << "MIX_CreateMixerDevice failed: " << SDL_GetError() << "\n";
                 return;
             }
-            m_SoundThread = std::thread(&SoundImpl::ThreadWorkerLoop, this);
+#ifndef __EMSCRIPTEN__
+            m_SoundThread = std::jthread(&SoundImpl::ThreadWorkerLoop, this);
+#endif
         }
 
         ~SoundImpl() {
+#ifndef __EMSCRIPTEN__
             m_Queue.Stop();
-            if (m_SoundThread.joinable()) {
-                m_SoundThread.join();
-            }
-
+#endif
             for (auto& [id, entry] : m_Sounds) {
                 for (MIX_Track* track : entry.second) {
                     MIX_StopTrack(track, 0);
@@ -41,7 +44,7 @@ namespace dae {
             MIX_Quit();
         }
 
-        void Load(const soundId id, const std::string& path) { 
+        void Load(const soundId id, const std::string& path) {
             MIX_Audio* clip = MIX_LoadAudio(m_Mixer, path.c_str(), true);
             if (clip) {
                 m_Sounds.emplace(id, std::pair{ clip, std::vector<MIX_Track*>{ } });
@@ -52,7 +55,7 @@ namespace dae {
         }
 
         void SubmitPlay(soundId id, float volume) {
-            m_Queue.Push([this, id, volume]() {
+            auto playTask = [this, id, volume]() {
                 auto it = m_Sounds.find(id);
                 if (it == m_Sounds.end()) return;
 
@@ -75,37 +78,53 @@ namespace dae {
                 MIX_SetTrackAudio(track, audio);
                 MIX_SetTrackGain(track, volume);
                 MIX_PlayTrack(track, 0);
-                });
+                };
+#ifdef __EMSCRIPTEN__
+            playTask();  
+#else
+            m_Queue.Push(std::move(playTask));  
+#endif
         }
 
         void SubmitStopAll() {
-            m_Queue.Push([this]() {
+            auto stopTask = [this]() {
                 for (auto& [id, entry] : m_Sounds) {
                     for (MIX_Track* track : entry.second) {
                         MIX_StopTrack(track, 0);
                     }
                 }
-                });
+                };
+
+#ifdef __EMSCRIPTEN__
+            stopTask(); 
+#else
+            m_Queue.Push(std::move(stopTask));  
+#endif
         }
 
-    private:
+    private: 
+#ifndef __EMSCRIPTEN__
         void ThreadWorkerLoop() {
             std::function<void()> task;
             while (m_Queue.WaitAndPop(task)) {
                 task();
             }
         }
+#endif
 
         std::map<soundId, std::pair<MIX_Audio*, std::vector<MIX_Track*>>> m_Sounds;
         MIX_Mixer* m_Mixer{ nullptr };
+
+#ifndef __EMSCRIPTEN__
         SoundEventQueue m_Queue{};
-        std::thread m_SoundThread;
+        std::jthread m_SoundThread; 
+#endif
     };
 
-    // Wrapper
+    // Wrapper  
     SDLSoundSystem::SDLSoundSystem() : m_pImpl{ std::make_unique<SoundImpl>() } {}
     SDLSoundSystem::~SDLSoundSystem() = default;
-     
+
     void SDLSoundSystem::PlaySound(const soundId id, float volume) {
         if (!m_IsMuted) m_pImpl->SubmitPlay(id, volume);
     }
@@ -121,4 +140,5 @@ namespace dae {
     void SDLSoundSystem::ToggleMute() {
         m_IsMuted = !m_IsMuted;
     }
+
 }
