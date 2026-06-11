@@ -39,6 +39,16 @@ void Scene::Update(float deltaTime)
 	CleanUpMarkedForDeletion();
 }
 
+void Scene::LateUpdate(float deltaTime)
+{
+	for (auto& object : m_objects)
+	{
+		object->LateUpdate(deltaTime);
+	}
+
+	CleanUpMarkedForDeletion();
+}
+
 void Scene::Render() const
 {
 	for (const auto& object : m_objects)

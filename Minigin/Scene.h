@@ -14,6 +14,7 @@ namespace dae
 		void RemoveAll();
 
 		void Update(float);
+		void LateUpdate(float);
 		void Render() const;
 
 		void CleanUpMarkedForDeletion();

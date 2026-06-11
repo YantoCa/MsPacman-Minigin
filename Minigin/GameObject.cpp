@@ -30,6 +30,13 @@ namespace dae {
         }
     }
 
+    void GameObject::LateUpdate(float deltaTime) {
+        for (const auto& component : m_Components)
+        {
+            component->LateUpdate(deltaTime);
+        }
+    }
+
     void GameObject::FixedUpdate()
     {
         for (const auto& component : m_Components)

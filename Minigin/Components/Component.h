@@ -13,6 +13,7 @@ namespace dae {
 		Component& operator=(Component&&) = delete;
 
 		virtual void Update(float) {}
+		virtual void LateUpdate(float) {}
 		virtual void Render() const {}
 		virtual void FixedUpdate() {}
 

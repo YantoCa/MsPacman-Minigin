@@ -137,5 +137,7 @@ void dae::Minigin::RunOneFrame()
 
 	SceneManager::GetInstance().Update(deltaTime);
 
+	SceneManager::GetInstance().LateUpdate(deltaTime);
+
 	Renderer::GetInstance().Render();
 }

@@ -22,6 +22,7 @@ namespace dae
 	public:
 		void Render() const;
 		void Update(float deltaTime);
+		void LateUpdate(float);
 		void FixedUpdate();
 
 		//void SetTexture(const std::string& filename);
