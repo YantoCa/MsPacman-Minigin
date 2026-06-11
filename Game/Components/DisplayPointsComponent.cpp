@@ -14,7 +14,7 @@ namespace game {
  
     void DisplayPointsComponent::OnNotify(const dae::GameObject& object, dae::Event event) {
         if (event == dae::Event::ScoreChanged) {
-            auto* pointsComp = object.GetComponent<dae::PointsComponent>();
+            auto* pointsComp = object.GetComponent<PointsComponent>();
             // Always safety check your pointers!
             if (pointsComp && m_pTextComponent) {
                 m_pTextComponent->SetText("Score: " + std::to_string(pointsComp->GetScore()));

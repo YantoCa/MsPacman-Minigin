@@ -11,7 +11,7 @@ namespace game {
     }
 
     void AddPointsCommand::Execute() {
-        auto points = m_Player.GetComponent<dae::PointsComponent>();
+        auto points = m_Player.GetComponent<PointsComponent>();
         if (points)
         {
             points->AddPoints(m_Points);
@@ -24,7 +24,7 @@ namespace game {
     }
 
     void MoveCommand::Execute() {
-        auto* movement = m_Object.GetComponent<dae::MovementComponent>();
+        auto* movement = m_Object.GetComponent<MovementComponent>();
 
         if (movement)
         {

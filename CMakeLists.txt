@@ -170,6 +170,7 @@ target_link_libraries(minigin_lib PUBLIC
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Game/Main.cpp  
   Game/MsPacman.cpp
+  Game/Commands.cpp
 
   Game/Components/MovementComponent.cpp  #
   Game/Components/FPSComponent.cpp 
