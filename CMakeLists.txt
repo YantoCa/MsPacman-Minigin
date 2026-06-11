@@ -1,45 +1,14 @@
 cmake_minimum_required(VERSION 3.26)
-project(Minigin)
+project(Minigin) 
 
 if(EMSCRIPTEN)
   message("Using Emscripten!")
-endif()
-
-if(EMSCRIPTEN)
   set(TARGET_NAME minigin_web)
   set(TARGET_PARAM )
 else()
-  set(TARGET_NAME minigin)
+  set(TARGET_NAME MsPacman)
   set(TARGET_PARAM WIN32)
-endif()
-
-# list source files here
-add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Minigin/Font.cpp
-  Minigin/GameObject.cpp
-  Minigin/InputManager.cpp
-  Minigin/Main.cpp
-  Minigin/Minigin.cpp
-  Minigin/Renderer.cpp
-  Minigin/ResourceManager.cpp
-  Minigin/Scene.cpp
-  Minigin/SceneManager.cpp
-  
-  Minigin/Texture2D.cpp
-  "Minigin/Components/TransformComponent.cpp"
-  "Minigin/Components/RenderComponent.cpp" 
-  "Minigin/Components/TextComponent.cpp" 
-  "Minigin/Components/FPSComponent.cpp" 
-  "Minigin/Components/RotationComponent.cpp" 
-  "Minigin/Components/ImGuiComponent.cpp" 
-   
-  "Minigin/Components/PointsComponent.cpp" 
-  "Minigin/Components/DisplayPointsComponent.cpp" 
-  "Minigin/Command.cpp" 
-  "Game/MsPacman.cpp" "Minigin/Bindings/KeyboardBinding.cpp" "Minigin/Bindings/Gamepad.cpp" "Minigin/Bindings/ControllerBinding.cpp" "Minigin/Components/MovementComponent.cpp" "Minigin/Subject.cpp")
-
-# enable c++20 features
-target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
+endif() 
 
 include(FetchContent)
 # add glm
@@ -112,6 +81,7 @@ if(NOT SDL3_ttf_FOUND)
     FetchContent_MakeAvailable(SDL3_ttf)
   endif()
 endif()
+
 # Dear ImGui
 FetchContent_Declare(
   imgui
@@ -146,24 +116,79 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 find_package(Steamworks QUIET)
 
-target_include_directories("${TARGET_NAME}" PUBLIC 
-  ${CMAKE_SOURCE_DIR}/Minigin/
-  ${CMAKE_SOURCE_DIR}/Minigin/Bindings # seperate bindings
-  ${CMAKE_SOURCE_DIR}/Game/ # Tell cmake to also look into Game/ folder
-  ${glm_SOURCE_DIR}
-  ${sdl3_SOURCE_DIR}/include
-  ${sdl3_image_SOURCE_DIR}/include
-  ${sdl3_ttf_SOURCE_DIR}/include
+# ------------------------------------------------------------------------------------------------------
+# Engine (Static Library)
+add_library(minigin_lib STATIC
+  Minigin/Font.cpp
+  Minigin/GameObject.cpp
+  Minigin/InputManager.cpp
+  Minigin/Minigin.cpp
+  Minigin/Renderer.cpp
+  Minigin/ResourceManager.cpp
+  Minigin/Scene.cpp
+  Minigin/SceneManager.cpp
+  Minigin/Texture2D.cpp 
+  Minigin/Components/TransformComponent.cpp
+
+  Minigin/Bindings/KeyboardBinding.cpp 
+  Minigin/Bindings/Gamepad.cpp 
+  Minigin/Bindings/ControllerBinding.cpp
+  
+  Minigin/Components/RenderComponent.cpp 
+  Minigin/Components/TextComponent.cpp 
+  Minigin/Components/ImGuiComponent.cpp 
+   
+  Minigin/Subject.cpp 
+)
+
+target_compile_features(minigin_lib PUBLIC cxx_std_20)
+
+target_include_directories(minigin_lib PUBLIC 
+  ${CMAKE_SOURCE_DIR}/Minigin
+  ${CMAKE_SOURCE_DIR}/Minigin/Bindings  
+  ${CMAKE_SOURCE_DIR}/Minigin/Components  
+  # ${CMAKE_SOURCE_DIR}/Game/ # Tell cmake to also look into Game/ folder
+  
+  #${glm_SOURCE_DIR}
+  #${sdl3_SOURCE_DIR}/include
+  #${sdl3_image_SOURCE_DIR}/include
+  #${sdl3_ttf_SOURCE_DIR}/include
   ${imgui_SOURCE_DIR}
   ${VLD_INCLUDE_DIR}
 )
 
-target_link_libraries("${TARGET_NAME}" PUBLIC 
+target_link_libraries(minigin_lib PUBLIC 
   SDL3::SDL3 
   SDL3_ttf::SDL3_ttf
+  glm::glm
   imgui
   ${VLD_LIBRARIES}
 )
+
+# ------------------------------------------------------------------------------------------------------
+# Game (Executable)
+add_executable(${TARGET_NAME} ${TARGET_PARAM}
+  Game/Main.cpp  
+  Game/MsPacman.cpp
+
+  Game/Components/MovementComponent.cpp  #
+  Game/Components/FPSComponent.cpp 
+  Game/Components/RotationComponent.cpp 
+  Game/Components/PointsComponent.cpp 
+  Game/Components/DisplayPointsComponent.cpp
+)
+
+target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
+
+target_include_directories(${TARGET_NAME} PRIVATE
+  ${CMAKE_SOURCE_DIR}/Game/
+  ${CMAKE_SOURCE_DIR}/Game/Components
+
+  ${CMAKE_SOURCE_DIR}/Data/
+)
+# combine Game and Library
+target_link_libraries(${TARGET_NAME} PRIVATE minigin_lib)
+
 
 if(MSVC)
   # compile at warning level 4 + treat warnings as errors
@@ -172,6 +197,7 @@ else()
   target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()
 
+#
 if(EMSCRIPTEN)
   set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
   set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH --preload-file \"${CMAKE_SOURCE_DIR}/Data@/\"")

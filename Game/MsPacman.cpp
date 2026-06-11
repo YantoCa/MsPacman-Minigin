@@ -11,8 +11,7 @@
 
 #include "Components/RenderComponent.h"
 #include "Components/TextComponent.h"
-#include "Components/FPSComponent.h"
-#include "Components/RotationComponent.h"
+#include "Components/FPSComponent.h" 
 #include "Components/MovementComponent.h"
 #include "Components/ImGuiComponent.h"
 #include "Components/DisplayPointsComponent.h"
@@ -37,11 +36,11 @@ void MsPacman::Initialize() {
 		p1->AddComponent<dae::MovementComponent>();
 
 		// Bind bindings to player 1
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<dae::AddPointsCommand>(*p1, 1), dae::KeyState::OnPress)); 
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ 0.f, -1.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_S, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ 0.f, 1.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ -1.f, 0.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_D, std::make_unique<dae::MoveCommand>(*p1, glm::vec3{ 1.f, 0.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<AddPointsCommand>(*p1, 1), dae::KeyState::OnPress)); 
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<MoveCommand>(*p1, glm::vec3{ 0.f, -1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_S, std::make_unique<MoveCommand>(*p1, glm::vec3{ 0.f, 1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<MoveCommand>(*p1, glm::vec3{ -1.f, 0.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_D, std::make_unique<MoveCommand>(*p1, glm::vec3{ 1.f, 0.f, 0.f }), dae::KeyState::OnHold));
 
 		// Observers Player 1
 			// Display points UI
