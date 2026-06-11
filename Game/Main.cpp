@@ -5,11 +5,7 @@
 #include <vld.h>
 #endif
 
-#include "Minigin.h"
-#include "SceneManager.h"
-#include "Scene.h"
-#include "ResourceManager.h"
-#include "GameObject.h" 
+#include "Minigin.h" 
 
 #include "MsPacman.h"
 

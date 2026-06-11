@@ -70,7 +70,7 @@ namespace dae
 	};
 
 	Gamepad::Gamepad(unsigned int controllerIndex) : m_pImpl{ std::make_unique<GamepadImpl>(controllerIndex) } {}
-	Gamepad::~Gamepad() = default;
+	Gamepad::~Gamepad() = default;// sdl_closegamepad
 	void Gamepad::Update() { m_pImpl->Update(); }
 	bool Gamepad::IsDown(ControllerButton button) const { return m_pImpl->IsDown(button); }
 	bool Gamepad::IsUp(ControllerButton button) const { return m_pImpl->IsUp(button); }
