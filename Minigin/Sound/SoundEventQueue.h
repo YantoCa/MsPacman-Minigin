@@ -25,6 +25,6 @@ namespace dae {
         std::mutex m_Mutex{};
         std::condition_variable m_ConditionVariable{};
 
-        bool m_Running{ true };
+        std::atomic<bool> m_Running{ true };
     };
 }

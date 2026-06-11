@@ -15,6 +15,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "ServiceLocator.h"
 
 #include <chrono>
 
@@ -30,6 +31,21 @@ void LogSDLVersion(const std::string& message, int major, int minor, int patch)
 	std::cout << message << major << "." << minor << "." << patch << "\n";
 #endif
 }
+
+// Console popup
+#if defined(WIN32) && defined(_DEBUG)
+void CreateDeveloperConsole()
+{ 
+	if (AllocConsole())
+	{
+		FILE* fp; 
+		freopen_s(&fp, "CONOUT$", "w", stdout); 
+		freopen_s(&fp, "CONOUT$", "w", stderr);
+
+		std::cout << "[Engine Boot] Developer Console Successfully Allocated.\n";
+	}
+}
+#endif
 
 #ifdef __EMSCRIPTEN__
 #include "emscripten.h"
@@ -78,12 +94,18 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath, std::unique_ptr<Gam
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
 
+#if defined(WIN32) && defined(_DEBUG)
+	CreateDeveloperConsole(); // create console
+#endif
+
 	Renderer::GetInstance().Init(g_window);
 	ResourceManager::GetInstance().Init(dataPath);
 }
 
 dae::Minigin::~Minigin()
 {
+	dae::ServiceLocator::RegisterSoundSystem(nullptr); // force deconstructor and empty out the SoundSystem before SDL_Quit()
+
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(g_window);
 	g_window = nullptr;
