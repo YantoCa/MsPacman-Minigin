@@ -2,14 +2,14 @@
 #include "Component.h"
 #include "TextComponent.h"
 
-namespace dae {
-	class FPSComponent final : public Component {
+namespace game {
+	class FPSComponent final : public dae::Component {
 	public:
-		FPSComponent(GameObject& owner, std::shared_ptr<Font> font);
+		FPSComponent(dae::GameObject& owner, std::shared_ptr<dae::Font> font);
 
 		void Update(float deltaTime) override;
 	private:
-		TextComponent* m_TextComponent{};
+		dae::TextComponent* m_TextComponent{};
 
 		float m_AccumulatedTime{ 0.f };
 	};

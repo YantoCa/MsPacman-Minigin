@@ -8,6 +8,7 @@
 
 #include "KeyboardBinding.h"
 #include "ControllerBinding.h"
+#include "Commands.h"
 
 #include "Components/RenderComponent.h"
 #include "Components/TextComponent.h"
@@ -16,6 +17,8 @@
 #include "Components/ImGuiComponent.h"
 #include "Components/DisplayPointsComponent.h"
 #include "Components/PointsComponent.h"
+
+using namespace game;
 
 void MsPacman::Initialize() {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
@@ -32,8 +35,8 @@ void MsPacman::Initialize() {
 		auto p1 = std::make_unique<dae::GameObject>();
 		p1->AddComponent<dae::RenderComponent>("logo.png");
 		p1->SetPosition(358, 180);
-		auto* pPointsCompP1 = p1->AddComponent<dae::PointsComponent>(); // Grab pointer to subject to attach it to observer
-		p1->AddComponent<dae::MovementComponent>();
+		auto* pPointsCompP1 = p1->AddComponent<PointsComponent>(); // Grab pointer to subject to attach it to observer
+		p1->AddComponent<MovementComponent>();
 
 		// Bind bindings to player 1
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<AddPointsCommand>(*p1, 1), dae::KeyState::OnPress)); 
@@ -47,7 +50,7 @@ void MsPacman::Initialize() {
 			auto DispalyPoints = std::make_unique<dae::GameObject>();
 				DispalyPoints->SetPosition(10.f, 325.f);
 				DispalyPoints->AddComponent<dae::TextComponent>("Score: 0", font);
-				auto* pDisplayObs = DispalyPoints->AddComponent<dae::DisplayPointsComponent>();
+				auto* pDisplayObs = DispalyPoints->AddComponent<DisplayPointsComponent>();
 
 		// Couple Subjet and observer
 		pPointsCompP1->AddObserver(pDisplayObs);
@@ -60,23 +63,23 @@ void MsPacman::Initialize() {
 		auto p2 = std::make_unique<dae::GameObject>();
 		p2->AddComponent<dae::RenderComponent>("logo.png");
 		p2->SetPosition(358, 180);
-		auto* pPointsCompP2 = p2->AddComponent<dae::PointsComponent>(); // Grab pointer to subject to attach it to observer
-		p2->AddComponent<dae::MovementComponent>();
+		auto* pPointsCompP2 = p2->AddComponent<PointsComponent>(); // Grab pointer to subject to attach it to observer
+		p2->AddComponent<MovementComponent>();
 
 		// Bind bindings to player 2
 		auto& controller0 = input.AddController(0);
-		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<dae::AddPointsCommand>(*p2, 1), dae::KeyState::OnPress));
-		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_UP, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ 0.f, -1.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_DOWN, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ 0.f, 1.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_LEFT, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ -1.f, 0.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_RIGHT, std::make_unique<dae::MoveCommand>(*p2, glm::vec3{ 1.f, 0.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_A, std::make_unique<AddPointsCommand>(*p2, 1), dae::KeyState::OnPress));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_UP, std::make_unique<MoveCommand>(*p2, glm::vec3{ 0.f, -1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_DOWN, std::make_unique<MoveCommand>(*p2, glm::vec3{ 0.f, 1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_LEFT, std::make_unique<MoveCommand>(*p2, glm::vec3{ -1.f, 0.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_RIGHT, std::make_unique<MoveCommand>(*p2, glm::vec3{ 1.f, 0.f, 0.f }), dae::KeyState::OnHold));
 
 		// Observers Player 2
 			// Display points UI
 				DispalyPoints = std::make_unique<dae::GameObject>();
 				DispalyPoints->SetPosition(10.f, 375.f);
 				DispalyPoints->AddComponent<dae::TextComponent>("Score: 0", font);
-				pDisplayObs = DispalyPoints->AddComponent<dae::DisplayPointsComponent>();
+				pDisplayObs = DispalyPoints->AddComponent<DisplayPointsComponent>();
 
 		// Couple Subject and observer
 		pPointsCompP2->AddObserver(pDisplayObs);
@@ -87,7 +90,7 @@ void MsPacman::Initialize() {
  
 	// FPS counter
 		auto fps = std::make_unique<dae::GameObject>();
-		fps->AddComponent<dae::FPSComponent>(font);
+		fps->AddComponent<FPSComponent>(font);
 		scene.Add(std::move(fps));
 
 	// ImGui 

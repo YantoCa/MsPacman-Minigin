@@ -6,14 +6,14 @@
 
 #include "Observer.h"
 
-namespace dae {
-	class DisplayPointsComponent final : public Component, public Observer{
+namespace game {
+	class DisplayPointsComponent final : public dae::Component, public dae::Observer{
 	public:
-		DisplayPointsComponent(GameObject& owner); 
+		DisplayPointsComponent(dae::GameObject& owner);
 		~DisplayPointsComponent() override = default;
 
-		void OnNotify(const GameObject& object, Event event) override;
+		void OnNotify(const dae::GameObject& object, dae::Event event) override;
 	private: 
-		TextComponent* m_pTextComponent{nullptr};
+		dae::TextComponent* m_pTextComponent{nullptr};
 	};
 }

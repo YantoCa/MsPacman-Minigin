@@ -1,8 +1,8 @@
 #include "MovementComponent.h" 
 #include "GameObject.h"
 
-namespace dae {
-	MovementComponent::MovementComponent(GameObject& owner, float speed) noexcept
+namespace game {
+	MovementComponent::MovementComponent(dae::GameObject& owner, float speed) noexcept
 		: Component(owner) {
 		m_Speed = speed;
 	}

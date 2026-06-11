@@ -1,9 +1,9 @@
 #include "PointsComponent.h"
 #include "Event.h"
 
-namespace dae
+namespace game
 {
-    PointsComponent::PointsComponent(GameObject& owner)
+    PointsComponent::PointsComponent(dae::GameObject& owner)
         : Component(owner), m_Score(0)
     {
     }
@@ -12,7 +12,7 @@ namespace dae
     {
         m_Score += amount;
         
-        Notify(*GetOwner(), Event::ScoreChanged);
+        Notify(*GetOwner(), dae::Event::ScoreChanged);
     }
 
     int PointsComponent::GetScore() const

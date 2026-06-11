@@ -2,12 +2,12 @@
 #include "Component.h"
 #include "Subject.h"
 
-namespace dae
+namespace game
 {
-    class PointsComponent final : public Component, public Subject
+    class PointsComponent final : public dae::Component, public dae::Subject
     {
     public:
-        PointsComponent(GameObject& owner);
+        PointsComponent(dae::GameObject& owner);
 
         void AddPoints(int amount);
         int GetScore() const;

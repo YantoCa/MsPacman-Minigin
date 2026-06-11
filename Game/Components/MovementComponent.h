@@ -2,12 +2,12 @@
 #include <glm/glm.hpp>
 #include "Component.h"
 
-namespace dae {
+namespace game {
 	class TransformComponent;
 
-	class MovementComponent final : public Component { 
+	class MovementComponent final : public dae::Component { 
 	public:
-		MovementComponent(GameObject& owner, float speed = 100.f) noexcept;
+		MovementComponent(dae::GameObject& owner, float speed = 100.f) noexcept;
 		~MovementComponent() override = default;
 		
 		void Update(float deltaTime) override;
