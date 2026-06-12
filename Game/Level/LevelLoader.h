@@ -15,14 +15,14 @@ namespace game {
 	public:
 		LevelLoader() = delete;
 
-		static bool LoadLevel(const std::string& csvFilePath, dae::Scene& targetScene);
+		static GridComponent* LoadLevel(const std::string& csvFilePath, dae::Scene& targetScene);
 	private:
 		static std::vector<std::vector<int>> ParseCSV(const std::string& csvFilePath);
 		
 		static GridComponent* InitializeGrid(const std::vector<std::vector<int>>& matrix, dae::Scene& scene);
 
 		static void PopulateScene(const std::vector<std::vector<int>>& matrix, dae::Scene& scene, GridComponent* pGrid);
-		static void SpawnTile(int tileId, const glm::vec3& centerPos, dae::Scene& scene, GridComponent* m_pGrid);
+		static void SpawnTile(int tileId, const glm::vec3& centerPos, dae::Scene& scene/*, GridComponent* pGrid*/);
 
 		static constexpr float TILE_SIZE = 8.0f;
 	};

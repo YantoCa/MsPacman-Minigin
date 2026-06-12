@@ -9,14 +9,14 @@
 namespace game { 
     class MoveCommand final : public dae::Command {
     public:
-        MoveCommand(dae::GameObject& object, const glm::vec3& direction);
+        MoveCommand(dae::GameObject& object, const glm::ivec2& direction);
 
         void Execute() override;
 
     private:
         dae::GameObject& m_Object;
 
-        glm::vec3 m_Direction;
+        glm::ivec2 m_Direction;
     };
 
     // delete seperate

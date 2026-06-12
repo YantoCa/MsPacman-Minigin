@@ -4,25 +4,25 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h" 
 #include "GridComponent.h"
-#include "GridMovementComponent.h"
+#include "SpawnPointComponent.h"
 
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
 namespace game {
-	bool LevelLoader::LoadLevel(const std::string& csvFilePath, dae::Scene& targetScene)
+	GridComponent* LevelLoader::LoadLevel(const std::string& csvFilePath, dae::Scene& targetScene)
 	{
 		auto levelMatrix = ParseCSV(csvFilePath);
 
-		if (levelMatrix.empty()) return false; // empty grid
+		if (levelMatrix.empty()) return nullptr; // empty grid
 
 		auto* pGrid = InitializeGrid(levelMatrix, targetScene);
-		if (!pGrid) return false;
+		if (!pGrid) return nullptr;
 
 		PopulateScene(levelMatrix, targetScene, pGrid);
 		
-		return true;
+		return pGrid;
 	}
 
 	std::vector<std::vector<int>> LevelLoader::ParseCSV(const std::string& csvFilePath)
@@ -104,12 +104,12 @@ namespace game {
 				int tileId = matrix[r][c];
 				glm::vec3 centerPos = pGrid->GridToWorldCenter(c, r);
 
-				SpawnTile(tileId, centerPos, scene, pGrid);
+				SpawnTile(tileId, centerPos, scene /*, pGrid*/);
 			}
 		}
 	}
 
-	void LevelLoader::SpawnTile(int tileId, const glm::vec3& centerPos, dae::Scene& scene, game::GridComponent* pGrid)
+	void LevelLoader::SpawnTile(int tileId, const glm::vec3& centerPos, dae::Scene& scene /*; GridComponent* pGrid*/)
 	{
 		switch (tileId)
 		{
@@ -142,16 +142,15 @@ namespace game {
 		}
 		break;
 
-		case 5: // Ms. Pac-man 16x16
-		{ // later create a central spawnpoint. where players can respawn on death or on loadup. (also for multiplayer)
-			auto player = std::make_unique<dae::GameObject>();
-			player->GetTransform().SetWorldPosition(centerPos);
-			player->AddComponent<dae::RenderComponent>("Characters/MsPacman.png"); 
-			player->AddComponent<GridMovementComponent>(pGrid);
+		case 5: // Ms. Pac-man 16x16 (Player spawnpoint)
+		{  
+			auto playerSpawnPoint = std::make_unique<dae::GameObject>();
+			playerSpawnPoint->GetTransform().SetWorldPosition(centerPos);
+			playerSpawnPoint->AddComponent<SpawnPointComponent>();
 
-			scene.Add(std::move(player));
+			scene.Add(std::move(playerSpawnPoint));
 
-			std::cout << "LevelLoader: creating MsPacman \n";
+			std::cout << "LevelLoader: creating SpawnPoint \n";
 		}
 		break;
 

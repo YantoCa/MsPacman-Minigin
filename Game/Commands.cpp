@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "Components/PointsComponent.h"
-#include "Components/MovementComponent.h"
+#include "Components/GridMovementComponent.h"
 
 #include "ServiceLocator.h"
  
@@ -23,16 +23,16 @@ namespace game {
     }
 
     // MoveCommand 
-    MoveCommand::MoveCommand(dae::GameObject& object, const glm::vec3& direction)
+    MoveCommand::MoveCommand(dae::GameObject& object, const glm::ivec2& direction)
         : m_Object{ object }, m_Direction{ direction } {
     }
 
     void MoveCommand::Execute() {
-        auto* movement = m_Object.GetComponent<MovementComponent>();
+        auto* movement = m_Object.GetComponent<GridMovementComponent>();
 
         if (movement)
         {
-            movement->SetTargetDirection(m_Direction);
+            movement->SetDesiredDirection(m_Direction);
         }
     }
 }

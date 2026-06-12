@@ -217,7 +217,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Game/Components/RotationComponent.cpp 
   Game/Components/PointsComponent.cpp 
   Game/Components/DisplayPointsComponent.cpp
- "Game/Level/LevelLoader.cpp" "Game/Components/GridComponent.cpp" "Game/Components/GridMovementComponent.cpp")
+ "Game/Level/LevelLoader.cpp" "Game/Components/GridComponent.cpp" "Game/Components/GridMovementComponent.cpp" "Game/Components/SpawnPointComponent.cpp")
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 
