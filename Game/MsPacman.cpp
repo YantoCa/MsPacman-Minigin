@@ -42,7 +42,7 @@ void MsPacman::Initialize() {
 	//dae::ServiceLocator::RegisterSoundSystem(std::move(decoratedSys)); 
 
 	// Level loader
-	LevelLoader::LoadLevel("Data/Levels/LevelTest.csv", scene);
+	LevelLoader::LoadLevel("Data/Levels/Level1.csv", scene);
 
 	//// Background
 	//	auto bg = std::make_unique<dae::GameObject>();
@@ -105,14 +105,14 @@ void MsPacman::Initialize() {
 	//	// Empty out
 	//	scene.Add(std::move(DispalyPoints));
 	//	scene.Add(std::move(p2));
- //
-	// FPS counter
-		auto fps = std::make_unique<dae::GameObject>();
-		fps->AddComponent<FPSComponent>(font);
-		scene.Add(std::move(fps));
+ ////
+	//// FPS counter
+	//	auto fps = std::make_unique<dae::GameObject>();
+	//	fps->AddComponent<FPSComponent>(font);
+	////	scene.Add(std::move(fps));
 
-	// ImGui 
-		auto gui = std::make_unique<dae::GameObject>();
-		gui->AddComponent<dae::ImGuiComponent>();
-		scene.Add(std::move(gui));
+	//// ImGui 
+	//	auto gui = std::make_unique<dae::GameObject>();
+	//	gui->AddComponent<dae::ImGuiComponent>();
+	//	scene.Add(std::move(gui));
 }

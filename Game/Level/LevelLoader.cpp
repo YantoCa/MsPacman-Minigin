@@ -2,7 +2,9 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
-#include "RenderComponent.h" // Utilizing your engine component headers
+#include "RenderComponent.h" 
+#include "GridComponent.h"
+#include "GridMovementComponent.h"
 
 #include <fstream>
 #include <sstream>
@@ -11,59 +13,111 @@
 namespace game {
 	bool LevelLoader::LoadLevel(const std::string& csvFilePath, dae::Scene& targetScene)
 	{
+		auto levelMatrix = ParseCSV(csvFilePath);
+
+		if (levelMatrix.empty()) return false; // empty grid
+
+		auto* pGrid = InitializeGrid(levelMatrix, targetScene);
+		if (!pGrid) return false;
+
+		PopulateScene(levelMatrix, targetScene, pGrid);
+		
+		return true;
+	}
+
+	std::vector<std::vector<int>> LevelLoader::ParseCSV(const std::string& csvFilePath)
+	{
 		std::ifstream file(csvFilePath);
+		std::vector<std::vector<int>> matrix;
+
 		if (!file.is_open())
 		{
 			std::cerr << "LevelLoader Error: Failed to open layout file: " << csvFilePath << "\n";
-			return false;
+			return matrix;
 		}
 
 		std::string line;
-		int rowCounter = 0;
-
-		// Read line by line
 		while (std::getline(file, line))
 		{
 			std::stringstream lineStream(line);
 			std::string cellValue;
-			int columnCounter = 0;
+			std::vector<int> rowValues;
 
-			// Split csv by ;
 			while (std::getline(lineStream, cellValue, ';'))
 			{
 				if (!cellValue.empty())
 				{
 					try
 					{
-						int tileId = std::stoi(cellValue);
-						SpawnTile(tileId, columnCounter, rowCounter, targetScene);
+						rowValues.push_back(std::stoi(cellValue));
 					}
 					catch (const std::exception&)
 					{
-						continue;
+						rowValues.push_back(0); // nothing = empty space
 					}
 				}
-				columnCounter++;
 			}
-			rowCounter++;
+			if (!rowValues.empty()) matrix.push_back(rowValues);
 		}
 
-		return true;
+		return matrix;
 	}
 
-	void LevelLoader::SpawnTile(int tileId, int column, int row, dae::Scene& scene)
+	GridComponent* LevelLoader::InitializeGrid(const std::vector<std::vector<int>>& matrix, dae::Scene& scene)
 	{
-		// Calculate coordinates based on grid row and column positions
-		float xPos = column * TILE_SIZE;
-		float yPos = row * TILE_SIZE;
+		int totalRows = static_cast<int>(matrix.size());
+		int totalCols = totalRows > 0 ? static_cast<int>(matrix[0].size()) : 0;
 
+		if (totalRows == 0 || totalCols == 0)
+		{
+			std::cerr << "LevelLoader Error: Matrix boundaries cannot be zero.\n";
+			return nullptr;
+		}
+
+		auto gridObject = std::make_unique<dae::GameObject>();
+		 
+		auto* gridComp = gridObject->AddComponent<GridComponent>(totalCols, totalRows, TILE_SIZE);
+		 
+		for (int r = 0; r < totalRows; ++r)
+		{
+			for (int c = 0; c < totalCols; ++c)
+			{
+				gridComp->SetTile(c, r, matrix[r][c]);
+			}
+		}
+
+		auto* rawGridPtr = gridComp;
+		scene.Add(std::move(gridObject));  
+
+		return rawGridPtr;
+	}
+
+	void LevelLoader::PopulateScene(const std::vector<std::vector<int>>& matrix, dae::Scene& scene, GridComponent* pGrid)
+	{
+		int totalRows = pGrid->GetRows();
+		int totalCols = pGrid->GetColumns();
+
+		for (int r = 0; r < totalRows; ++r)
+		{
+			for (int c = 0; c < totalCols; ++c)
+			{
+				int tileId = matrix[r][c];
+				glm::vec3 centerPos = pGrid->GridToWorldCenter(c, r);
+
+				SpawnTile(tileId, centerPos, scene, pGrid);
+			}
+		}
+	}
+
+	void LevelLoader::SpawnTile(int tileId, const glm::vec3& centerPos, dae::Scene& scene, game::GridComponent* pGrid)
+	{
 		switch (tileId)
 		{
 		case 1: // Wall 24x24
 		{
 			auto wall = std::make_unique<dae::GameObject>();
-			wall->GetTransform().SetWorldPosition(glm::vec3{ xPos, yPos, 0.0f });
-			wall->AddComponent<dae::RenderComponent>("Wall.png");
+			wall->GetTransform().SetWorldPosition(centerPos);
+			wall->AddComponent<dae::RenderComponent>("Tiles/Wall.png");
 			scene.Add(std::move(wall)); 
 		}
 		break;
@@ -71,7 +125,7 @@ namespace game {
 		case 2: // Pac-Dot, 8x8
 		{ 
 			auto dot = std::make_unique<dae::GameObject>(); 
-			dot->GetTransform().SetWorldPosition(glm::vec3{ xPos + PADDING_8x8, yPos + PADDING_8x8, 0.0f });
+			dot->GetTransform().SetWorldPosition(centerPos);
 			dot->AddComponent<dae::RenderComponent>("Tiles/Pellet.png"); 
 			scene.Add(std::move(dot)); 
 		}
@@ -80,7 +134,7 @@ namespace game {
 		case 3: // Power Pellet 8x8
 		{
 			auto powerPellet = std::make_unique<dae::GameObject>();
-			powerPellet->GetTransform().SetWorldPosition(glm::vec3{ xPos + PADDING_8x8, yPos + PADDING_8x8, 0.0f });
+			powerPellet->GetTransform().SetWorldPosition(centerPos);
 			powerPellet->AddComponent<dae::RenderComponent>("Tiles/PowerPellet.png");
 			scene.Add(std::move(powerPellet));
 
@@ -91,8 +145,9 @@ namespace game {
 		case 5: // Ms. Pac-man 16x16
 		{ // later create a central spawnpoint. where players can respawn on death or on loadup. (also for multiplayer)
 			auto player = std::make_unique<dae::GameObject>();
-			player->GetTransform().SetWorldPosition(glm::vec3{ xPos + PADDING_16x16 , yPos + PADDING_16x16, 0.0f });
+			player->GetTransform().SetWorldPosition(centerPos);
 			player->AddComponent<dae::RenderComponent>("Characters/MsPacman.png"); 
+			player->AddComponent<GridMovementComponent>(pGrid);
 
 			scene.Add(std::move(player));
 
