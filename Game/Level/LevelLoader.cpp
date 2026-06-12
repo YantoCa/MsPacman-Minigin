@@ -25,10 +25,10 @@ namespace game {
 		return pGrid;
 	}
 
-	std::vector<std::vector<int>> LevelLoader::ParseCSV(const std::string& csvFilePath)
+	std::vector<std::vector<TileType>> LevelLoader::ParseCSV(const std::string& csvFilePath)
 	{
 		std::ifstream file(csvFilePath);
-		std::vector<std::vector<int>> matrix;
+		std::vector<std::vector<TileType>> matrix;
 
 		if (!file.is_open())
 		{
@@ -41,7 +41,7 @@ namespace game {
 		{
 			std::stringstream lineStream(line);
 			std::string cellValue;
-			std::vector<int> rowValues;
+			std::vector<TileType> rowValues;
 
 			while (std::getline(lineStream, cellValue, ';'))
 			{
@@ -49,11 +49,12 @@ namespace game {
 				{
 					try
 					{
-						rowValues.push_back(std::stoi(cellValue));
+						int rawData = std::stoi(cellValue);
+						rowValues.push_back(static_cast<TileType>(rawData));
 					}
 					catch (const std::exception&)
 					{
-						rowValues.push_back(0); // nothing = empty space
+						rowValues.push_back(TileType::Empty); // nothing = empty space
 					}
 				}
 			}
@@ -63,7 +64,7 @@ namespace game {
 		return matrix;
 	}
 
-	GridComponent* LevelLoader::InitializeGrid(const std::vector<std::vector<int>>& matrix, dae::Scene& scene)
+	GridComponent* LevelLoader::InitializeGrid(const std::vector<std::vector<TileType>>& matrix, dae::Scene& scene)
 	{
 		int totalRows = static_cast<int>(matrix.size());
 		int totalCols = totalRows > 0 ? static_cast<int>(matrix[0].size()) : 0;
@@ -92,7 +93,7 @@ namespace game {
 		return rawGridPtr;
 	}
 
-	void LevelLoader::PopulateScene(const std::vector<std::vector<int>>& matrix, dae::Scene& scene, GridComponent* pGrid)
+	void LevelLoader::PopulateScene(const std::vector<std::vector<TileType>>& matrix, dae::Scene& scene, GridComponent* pGrid)
 	{
 		int totalRows = pGrid->GetRows();
 		int totalCols = pGrid->GetColumns();
@@ -101,19 +102,21 @@ namespace game {
 		{
 			for (int c = 0; c < totalCols; ++c)
 			{
-				int tileId = matrix[r][c];
+				TileType tileId = matrix[r][c];
 				glm::vec3 centerPos = pGrid->GridToWorldCenter(c, r);
 
-				SpawnTile(tileId, centerPos, scene /*, pGrid*/);
+				SpawnTile(tileId, centerPos, scene, pGrid); 
 			}
 		}
 	}
 
-	void LevelLoader::SpawnTile(int tileId, const glm::vec3& centerPos, dae::Scene& scene /*; GridComponent* pGrid*/)
+	void LevelLoader::SpawnTile(TileType tileId, const glm::vec3& centerPos, dae::Scene& scene, GridComponent* pGrid)
 	{
-		switch (tileId)
+		if (!pGrid) return;
+
+		switch (tileId)	
 		{
-		case 1: // Wall 24x24
+		case TileType::Wall: // Wall 24x24
 		{
 			auto wall = std::make_unique<dae::GameObject>();
 			wall->GetTransform().SetWorldPosition(centerPos);
@@ -122,7 +125,7 @@ namespace game {
 		}
 		break;
 
-		case 2: // Pac-Dot, 8x8
+		case TileType::Pellet: // Pac-Dot, 8x8
 		{ 
 			auto dot = std::make_unique<dae::GameObject>(); 
 			dot->GetTransform().SetWorldPosition(centerPos);
@@ -131,26 +134,29 @@ namespace game {
 		}
 		break;
 
-		case 3: // Power Pellet 8x8
+		case TileType::PowerPellet: // Power Pellet 8x8
 		{
 			auto powerPellet = std::make_unique<dae::GameObject>();
 			powerPellet->GetTransform().SetWorldPosition(centerPos);
 			powerPellet->AddComponent<dae::RenderComponent>("Tiles/PowerPellet.png");
 			scene.Add(std::move(powerPellet));
-
-			std::cout << "LevelLoader: creating power pellet\n";
 		}
 		break;
 
-		case 5: // Ms. Pac-man 16x16 (Player spawnpoint)
+		case TileType::Player1Spawn: // Ms. Pac-man 16x16 (Player spawnpoint)
+		case TileType::Player2Spawn: // Ms. Pac-man 16x16 (Player spawnpoint)
 		{  
-			auto playerSpawnPoint = std::make_unique<dae::GameObject>();
-			playerSpawnPoint->GetTransform().SetWorldPosition(centerPos);
-			playerSpawnPoint->AddComponent<SpawnPointComponent>();
+			pGrid->AddPlayerSpawnPoint(centerPos);
+			 
+			std::cout << "LevelLoader: created PLAYER SpawnPoint \n";
+		}
+		break;
 
-			scene.Add(std::move(playerSpawnPoint));
+		case TileType::GhostSpawn: 
+		{
+			pGrid->AddGhostSpawnPoint(centerPos);
 
-			std::cout << "LevelLoader: creating SpawnPoint \n";
+			std::cout << "LevelLoader: created GHOST SpawnPoint \n";
 		}
 		break;
 
