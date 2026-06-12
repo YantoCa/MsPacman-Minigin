@@ -7,4 +7,7 @@ public:
 	~MsPacman() override = default;
 
 	void Initialize() override;
+
+private:
+	void SetupSound();
 };

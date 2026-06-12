@@ -29,29 +29,17 @@
 using namespace game;
 
 void MsPacman::Initialize() {
+	SetupSound();
+
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 	auto& input = dae::InputManager::GetInstance();
 
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
-	//// Sound
-	auto realAudioSys = std::make_unique<dae::SDLSoundSystem>(); // using sdl
-
-	realAudioSys->LoadSound(0, "Data/Dummy_Sound.mp3");
-
-	auto decoratedSys = std::make_unique<dae::LoggingSoundSystem>(std::move(realAudioSys)); // wrapper 
-
-	dae::ServiceLocator::RegisterSoundSystem(std::move(decoratedSys)); 
-
 	//// Level loader
 	auto GM = std::make_unique<dae::GameObject>();
 	auto* manager = GM->AddComponent<GameManager>();
-	manager->MazeTransition(Maze::PinkMaze, scene);
-
-	//// Background
-	//	auto bg = std::make_unique<dae::GameObject>();
-	//	bg->AddComponent<dae::RenderComponent>("background.png");
-	//	scene.Add(std::move(bg));
+	manager->MazeTransition(Maze::PinkMaze, scene); 
 
 	// Player 1 (Keyboard dummy)
 		auto p1 = std::make_unique<dae::GameObject>();
@@ -72,14 +60,16 @@ void MsPacman::Initialize() {
 		manager->ResetPlayers();
 		
 		scene.Add(std::move(p1));
-		scene.Add(std::move(GM));
-	//// FPS counter
-	//	auto fps = std::make_unique<dae::GameObject>();
-	//	fps->AddComponent<FPSComponent>(font);
-	////	scene.Add(std::move(fps));
+		scene.Add(std::move(GM)); 
+}
 
-	//// ImGui 
-	//	auto gui = std::make_unique<dae::GameObject>();
-	//	gui->AddComponent<dae::ImGuiComponent>();
-	//	scene.Add(std::move(gui));
+void MsPacman::SetupSound() {
+	//// Sound
+	auto realAudioSys = std::make_unique<dae::SDLSoundSystem>(); // using sdl
+
+	realAudioSys->LoadSound(0, "Data/Dummy_Sound.mp3");
+
+	auto decoratedSys = std::make_unique<dae::LoggingSoundSystem>(std::move(realAudioSys)); // wrapper 
+
+	dae::ServiceLocator::RegisterSoundSystem(std::move(decoratedSys));
 }
