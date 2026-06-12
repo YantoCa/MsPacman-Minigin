@@ -2,7 +2,7 @@
 #include "Components/Component.h"
 #include "Components/TextComponent.h" 
 #include "GameObject.h"  
-#include "Event.h"
+#include "Events.h"
 
 namespace game {
 	DisplayPointsComponent::DisplayPointsComponent(dae::GameObject& owner)
@@ -12,8 +12,8 @@ namespace game {
         
     }
  
-    void DisplayPointsComponent::OnNotify(const dae::GameObject& object, dae::Event event) {
-        if (event == dae::Event::ScoreChanged) {
+    void DisplayPointsComponent::OnNotify(const dae::GameObject& object, const std::string& event) {
+        if (event == game::Event::ScoreChanged) {
             auto* pointsComp = object.GetComponent<PointsComponent>();
             // Always safety check your pointers!
             if (pointsComp && m_pTextComponent) {

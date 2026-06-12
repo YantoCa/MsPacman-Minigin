@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
+#include <string>
 
 namespace dae {
 	class Observer;
 	class GameObject;
-	enum class Event;
 
 	class Subject {
 	public:
@@ -15,7 +15,7 @@ namespace dae {
 		void RemoveObserver(Observer* observer);
 
 	protected:
-		void Notify(const GameObject& object, Event event);
+		void Notify(const GameObject& object, const std::string& event);
 	private:
 		std::vector<Observer*> m_Observers{};
 	};

@@ -2,6 +2,8 @@
 #include "Component.h"
 #include "Observer.h"
 #include "MsPacmanEnums.h"
+#include <string>
+#include <vector>
 
 namespace dae {
 	class GameObject;
@@ -19,7 +21,7 @@ namespace game {
 		void MazeTransition(const Maze& newMaze, dae::Scene& currentScene);// completly switch to a new maze
 		GridComponent* GetMazeGrid() const; 
 
-		void OnNotify(const dae::GameObject& object, dae::Event event) override;
+		void OnNotify(const dae::GameObject& object, const std::string& event) override;
  
 		void AddPlayer(dae::GameObject* pPlayer);
 		void AddGhost(dae::GameObject* pGhost); // could attach player to it also making you control it?

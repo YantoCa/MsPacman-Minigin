@@ -1,5 +1,5 @@
 #include "PointsComponent.h"
-#include "Event.h"
+#include "Events.h"
 
 namespace game
 {
@@ -12,7 +12,7 @@ namespace game
     {
         m_Score += amount;
         
-        Notify(*GetOwner(), dae::Event::ScoreChanged);
+        Notify(*GetOwner(), game::Event::ScoreChanged);
     }
 
     int PointsComponent::GetScore() const

@@ -53,7 +53,7 @@ namespace game {
 
 	GridComponent* GameManager::GetMazeGrid() const { return m_pMazeGrid; }
 
-	void GameManager::OnNotify(const dae::GameObject& object, dae::Event event) {
+	void GameManager::OnNotify(const dae::GameObject& object, const std::string& event) {
 		object;
 		event;
 	}

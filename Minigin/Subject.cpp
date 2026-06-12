@@ -12,7 +12,7 @@ namespace dae {
 		m_Observers.erase(std::find(begin(m_Observers), end(m_Observers), observer));
 	}
 
-	void Subject::Notify(const GameObject& object, Event event)
+	void Subject::Notify(const GameObject& object, const std::string& event)
 	{
 		for (auto const& observer : m_Observers)
 		{

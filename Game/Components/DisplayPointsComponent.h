@@ -12,7 +12,7 @@ namespace game {
 		DisplayPointsComponent(dae::GameObject& owner);
 		~DisplayPointsComponent() override = default;
 
-		void OnNotify(const dae::GameObject& object, dae::Event event) override;
+		void OnNotify(const dae::GameObject& object, const std::string& event) override;
 	private: 
 		dae::TextComponent* m_pTextComponent{nullptr};
 	};

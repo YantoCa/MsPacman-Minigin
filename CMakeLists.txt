@@ -216,7 +216,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Game/Components/FPSComponent.cpp 
   Game/Components/PointsComponent.cpp 
   Game/Components/DisplayPointsComponent.cpp
- "Game/Level/LevelLoader.cpp" "Game/Components/GridComponent.cpp" "Game/Components/GridMovementComponent.cpp" "Game/GameManager.cpp")
+ "Game/Level/LevelLoader.cpp" "Game/Components/GridComponent.cpp" "Game/Components/GridMovementComponent.cpp" "Game/GameManager.cpp" "Game/Components/PelletComponent.cpp")
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 
