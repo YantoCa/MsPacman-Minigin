@@ -138,7 +138,7 @@ namespace dae {
         return false;
     }
 
-    void GameObject::MarkForDeletion(){
+    void GameObject::Destroy(){
         if (m_isMarkedForDeletion) return;
 
         m_isMarkedForDeletion = true;  // Mark itself for destruction
@@ -150,7 +150,7 @@ namespace dae {
         }
 
         for (auto* child : m_Childeren) {
-            child->MarkForDeletion(); // and its children	
+            child->Destroy(); // and its children	
         }
     }; 	
 }

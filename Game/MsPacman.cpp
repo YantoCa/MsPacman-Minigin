@@ -46,7 +46,7 @@ void MsPacman::Initialize() {
 		p1->AddComponent<dae::RenderComponent>("Characters/MsPacman.png");
 		p1->AddComponent<PointsComponent>(); // Grab pointer to subject to attach it to observer
 		//p1->AddComponent<MovementComponent>();
-		p1->AddComponent<GridMovementComponent>(manager->GetMazeGrid());
+		p1->AddComponent<GridMovementComponent>(manager->GetMazeGrid()); // dangeling my jingling
 
 
 		// Bind bindings to player 1
@@ -58,7 +58,6 @@ void MsPacman::Initialize() {
 		
 		// Bind player to gamemanager and reset position
 		manager->AddPlayer(p1.get());
-		manager->ResetPlayers();
 		
 		scene.Add(std::move(p1));
 

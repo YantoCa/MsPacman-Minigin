@@ -48,7 +48,7 @@ namespace dae
 		bool IsChildOf(const GameObject* potentialChild) const;
 
 		// Safe Deletion
-		void MarkForDeletion();
+		void Destroy();
 		bool IsMarkedForDeletion() const { return m_isMarkedForDeletion; }
 
 		// Component Functions

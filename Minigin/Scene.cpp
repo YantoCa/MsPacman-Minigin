@@ -11,7 +11,7 @@ void Scene::Add(std::unique_ptr<GameObject> object)
 
 void Scene::Remove(GameObject& object)
 { 
-	object.MarkForDeletion();
+	object.Destroy();
 }
 
 void Scene::RemoveAll()

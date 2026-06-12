@@ -21,17 +21,26 @@ namespace game {
 
 		void OnNotify(const dae::GameObject& object, dae::Event event) override;
  
-		void ResetMaze(); // Players, ghost, pellets everything (when maze completed or started)
-		void ResetPlayers();
 		void AddPlayer(dae::GameObject* pPlayer);
-
+		void AddGhost(dae::GameObject* pGhost); // could attach player to it also making you control it?
 	private: 
-		GridComponent* m_pMazeGrid{nullptr};
 		std::vector<dae::GameObject*> m_Players{}; 
-		std::vector<dae::GameObject*> m_Pellets{}; 
 		std::vector<dae::GameObject*> m_Ghosts{}; 
+		GridComponent* m_pMazeGrid{nullptr};
+
+		std::vector<dae::GameObject*> m_Pellets{}; 
+		std::vector<dae::GameObject*> m_Walls{}; 
 		std::vector<dae::GameObject*> m_Fruit{}; 
+
+		// Maze
+		void ClearUpMaze();
+		void CreateMazeGameObjects(int totalRows, int totalCols, dae::Scene& currentScene);
 		
+		void ResetMaze(); // Players, ghost, pellets everything (when maze completed or started)
+		
+		// Players
+		void ResetPlayers();
+		void ResetGhosts();
 		// UI seperate from grid, but listens to notifys
 		//int m_Highscore{};
 	};

@@ -1,6 +1,7 @@
 #pragma once
 #include <string> 
 #include "MsPacmanEnums.h"
+#include <vector>
 
 namespace dae
 {

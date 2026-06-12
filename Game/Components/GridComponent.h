@@ -6,6 +6,8 @@
 #include "MsPacmanEnums.h"
 
 namespace game {
+	constexpr float TILE_SIZE = 8.f;
+
 	class GridComponent final : public dae::Component {
 	public:
 		explicit GridComponent(dae::GameObject& owner, int columns, int rows, float tileSize = 8.f);
