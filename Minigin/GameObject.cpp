@@ -26,14 +26,16 @@ namespace dae {
     {
         for (const auto& component : m_Components)
         {
-            component->Update(deltaTime);
+            if(component->IsActive())
+                component->Update(deltaTime);
         }
     }
 
     void GameObject::LateUpdate(float deltaTime) {
         for (const auto& component : m_Components)
         {
-            component->LateUpdate(deltaTime);
+            if (component->IsActive())
+                component->LateUpdate(deltaTime);
         }
     }
 
@@ -41,7 +43,8 @@ namespace dae {
     {
         for (const auto& component : m_Components)
         {
-            component->FixedUpdate();
+            if (component->IsActive())
+                component->FixedUpdate();
         }
     }
 
@@ -49,7 +52,8 @@ namespace dae {
     {
         for (const auto& component : m_Components)
         {
-            component->Render();
+            if (component->IsActive())
+                component->Render();
         }
     }
 

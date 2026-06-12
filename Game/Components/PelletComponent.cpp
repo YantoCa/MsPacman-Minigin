@@ -17,7 +17,7 @@ void game::PelletComponent::Eat() {
 
     //off
     if (auto* pRender = GetOwner()->GetComponent<dae::RenderComponent>()) {
-        //pRender->SetEnabled(false);
+        pRender->SetActive(false);
     }
 
     Notify(*GetOwner(), game::Event::PelletEaten);
@@ -28,6 +28,6 @@ void game::PelletComponent::Reset() {
 
     //on
     if (auto* pRender = GetOwner()->GetComponent<dae::RenderComponent>()) {
-       //pRender->SetEnabled(true);
+       pRender->SetActive(true);
     }
 }

@@ -37,8 +37,6 @@ namespace game {
 				 
 				if (playerCollider->IsOverlapping(*pelletCollider))
 				{ 
-
-					std::cout << "i work" << std::endl;
 					pPelletComp->Eat();
 				}
 			}

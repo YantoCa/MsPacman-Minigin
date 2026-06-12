@@ -45,7 +45,7 @@ void MsPacman::Initialize() {
 		auto p1 = std::make_unique<dae::GameObject>();
 		p1->AddComponent<dae::RenderComponent>("Characters/MsPacman.png");
 		p1->AddComponent<PointsComponent>(); // Grab pointer to subject to attach it to observer
-		p1->AddComponent<dae::BoxColliderComponent>(16.f,16.f);
+		p1->AddComponent<dae::BoxColliderComponent>(8.f,8.f);
 		//p1->AddComponent<MovementComponent>();
 		p1->AddComponent<GridMovementComponent>(manager->GetMazeGrid()); // dangeling my jingling
 
