@@ -16,6 +16,7 @@ namespace game
 		 
 		void SetDesiredDirection(const glm::ivec2& dir);
 		void SetGrid(GridComponent* pGrid);
+		void SnapToGrid();
 	private:
 		GridComponent* m_pGrid;
 		float m_Speed;
@@ -27,6 +28,5 @@ namespace game
 		glm::ivec2 m_TargetTile{ 0, 0 };
 		bool m_IsMovingToTarget{ false };
 
-		void SnapToGrid();
 	};
 }

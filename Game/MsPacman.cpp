@@ -24,6 +24,7 @@
 
 #include "LevelLoader.h"
 #include "GridMovementComponent.h"
+#include "GameManager.h"
 
 using namespace game;
 
@@ -43,7 +44,9 @@ void MsPacman::Initialize() {
 	dae::ServiceLocator::RegisterSoundSystem(std::move(decoratedSys)); 
 
 	//// Level loader
-	auto* pLevelGrid = LevelLoader::LoadLevel("Data/Levels/Level1.csv", scene);
+	auto GM = std::make_unique<dae::GameObject>();
+	auto* manager = GM->AddComponent<GameManager>();
+	manager->MazeTransition(Maze::PinkMaze, scene);
 
 	//// Background
 	//	auto bg = std::make_unique<dae::GameObject>();
@@ -55,16 +58,21 @@ void MsPacman::Initialize() {
 		p1->AddComponent<dae::RenderComponent>("Characters/MsPacman.png");
 		p1->AddComponent<PointsComponent>(); // Grab pointer to subject to attach it to observer
 		//p1->AddComponent<MovementComponent>();
-		p1->AddComponent<GridMovementComponent>(pLevelGrid); 
+		p1->AddComponent<GridMovementComponent>(manager->GetMazeGrid());
 
 
 		// Bind bindings to player 1
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<AddPointsCommand>(*p1, 1), dae::KeyState::OnPress)); 
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<MoveCommand>(*p1, glm::vec3{ 0.f, -1.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_S, std::make_unique<MoveCommand>(*p1, glm::vec3{ 0.f, 1.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<MoveCommand>(*p1, glm::vec3{ -1.f, 0.f, 0.f }), dae::KeyState::OnHold));
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_D, std::make_unique<MoveCommand>(*p1, glm::vec3{ 1.f, 0.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, -1.f}), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_S, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, 1.f}), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<MoveCommand>(*p1, glm::ivec2{ -1.f, 0.f}), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_D, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 1.f, 0.f}), dae::KeyState::OnHold));
+		
+		manager->AddPlayer(p1.get());
+		manager->ResetPlayers();
+		
 		scene.Add(std::move(p1));
+		scene.Add(std::move(GM));
 	//// FPS counter
 	//	auto fps = std::make_unique<dae::GameObject>();
 	//	fps->AddComponent<FPSComponent>(font);
