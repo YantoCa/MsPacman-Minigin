@@ -20,6 +20,7 @@
 #include "Components/ImGuiComponent.h"
 #include "Components/DisplayPointsComponent.h"
 #include "Components/PointsComponent.h"
+#include "Components/BoxColliderComponent.h"
 
 #include "LevelLoader.h"
 #include "GridMovementComponent.h"
@@ -44,6 +45,7 @@ void MsPacman::Initialize() {
 		auto p1 = std::make_unique<dae::GameObject>();
 		p1->AddComponent<dae::RenderComponent>("Characters/MsPacman.png");
 		p1->AddComponent<PointsComponent>(); // Grab pointer to subject to attach it to observer
+		p1->AddComponent<dae::BoxColliderComponent>(16.f,16.f);
 		//p1->AddComponent<MovementComponent>();
 		p1->AddComponent<GridMovementComponent>(manager->GetMazeGrid()); // dangeling my jingling
 

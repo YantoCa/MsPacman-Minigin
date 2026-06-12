@@ -18,6 +18,8 @@ namespace game {
 		explicit GameManager(dae::GameObject& owner);
 		~GameManager() override = default;
 
+		void LateUpdate(float) override;
+
 		void MazeTransition(const Maze& newMaze, dae::Scene& currentScene);// completly switch to a new maze
 		GridComponent* GetMazeGrid() const; 
 

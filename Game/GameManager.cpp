@@ -8,9 +8,42 @@
 //
 #include "GridMovementComponent.h"
 #include "RenderComponent.h"
+#include "PelletComponent.h"
+#include "BoxColliderComponent.h"
+#include <iostream>
 
 namespace game {
 	GameManager::GameManager(dae::GameObject& owner) : dae::Component(owner) { }
+
+	// Colliders
+	void GameManager::LateUpdate(float) { // happens after Movement has been updated
+		for (auto* player : m_Players)
+		{
+			if (!player || player->IsMarkedForDeletion()) continue; 
+
+			auto* playerCollider = player->GetComponent<dae::BoxColliderComponent>();
+			if (!playerCollider) continue;  
+			 
+			for (auto* pellet : m_Pellets)
+			{
+				if (!pellet) continue;
+
+				auto* pPelletComp = pellet->GetComponent<game::PelletComponent>();
+				 
+				if (!pPelletComp || pPelletComp->IsEaten()) continue;
+
+				auto* pelletCollider = pellet->GetComponent<dae::BoxColliderComponent>();
+				if (!pelletCollider) continue;
+				 
+				if (playerCollider->IsOverlapping(*pelletCollider))
+				{ 
+
+					std::cout << "i work" << std::endl;
+					pPelletComp->Eat();
+				}
+			}
+		}
+	}
 
 	void GameManager::MazeTransition(const Maze& newMaze, dae::Scene& currentScene) {
 		ClearUpMaze();
@@ -79,8 +112,7 @@ namespace game {
 
 	void GameManager::ResetPlayers() {
 		if (!m_pMazeGrid) return;
-
-		// Snap players back to their starting positions
+		 
 		auto& playerSpawns = m_pMazeGrid->GetPlayerSpawnPoints(); 
 		for (size_t i = 0; i < m_Players.size(); ++i)
 		{
@@ -97,16 +129,15 @@ namespace game {
 	}
 	void GameManager::ResetGhosts() {
 		if (!m_pMazeGrid) return;
-
-		// Snap players back to their starting positions
+		 
 		auto& ghostpawns = m_pMazeGrid->GetGhostSpawnPoints();
-		for (size_t i = 0; i < m_Players.size(); ++i)
+		for (size_t i = 0; i < m_Ghosts.size(); ++i)
 		{
-			if (!m_Players[i]) continue;
+			if (!m_Ghosts[i]) continue;
 			glm::vec3 spawnPos = (i < ghostpawns.size()) ? ghostpawns[i] : glm::vec3{ 0.0f };
-			m_Players[i]->GetTransform().SetWorldPosition(spawnPos);
+			m_Ghosts[i]->GetTransform().SetWorldPosition(spawnPos);
 
-			if (auto* pGridMove = m_Players[i]->GetComponent<GridMovementComponent>())
+			if (auto* pGridMove = m_Ghosts[i]->GetComponent<GridMovementComponent>())
 			{
 				pGridMove->SetGrid(m_pMazeGrid); // update maze
 				pGridMove->SnapToGrid();
@@ -158,32 +189,39 @@ namespace game {
 
 				switch (tileId)
 				{
-				case TileType::Wall:
+				case TileType::Wall: // 8x8
 				{
 					auto wall = std::make_unique<dae::GameObject>();
 					wall->GetTransform().SetWorldPosition(centerPos);
 					wall->AddComponent<dae::RenderComponent>("Tiles/Wall.png");
-					m_Walls.push_back(wall.get()); // Tracked!
+
+					m_Walls.push_back(wall.get());
 					currentScene.Add(std::move(wall));
 				}
 				break;
 
-				case TileType::Pellet:
+				case TileType::Pellet: // 4x4
 				{
 					auto dot = std::make_unique<dae::GameObject>();
 					dot->GetTransform().SetWorldPosition(centerPos);
 					dot->AddComponent<dae::RenderComponent>("Tiles/Pellet.png");
-					m_Pellets.push_back(dot.get()); // Tracked!
+					dot->AddComponent<dae::BoxColliderComponent>(4.f, 4.f);
+					dot->AddComponent<PelletComponent>(10, false)->AddObserver(this);
+
+					m_Pellets.push_back(dot.get()); 
 					currentScene.Add(std::move(dot));
 				}
 				break;
 
-				case TileType::PowerPellet:
+				case TileType::PowerPellet: // 8x8
 				{
 					auto powerPellet = std::make_unique<dae::GameObject>();
 					powerPellet->GetTransform().SetWorldPosition(centerPos);
 					powerPellet->AddComponent<dae::RenderComponent>("Tiles/PowerPellet.png");
-					m_Pellets.push_back(powerPellet.get()); // Tracked under pellet array
+					powerPellet->AddComponent<dae::BoxColliderComponent>(8.f, 8.f);
+					powerPellet->AddComponent<PelletComponent>(10, true)->AddObserver(this);
+
+					m_Pellets.push_back(powerPellet.get());
 					currentScene.Add(std::move(powerPellet));
 				}
 				break;
