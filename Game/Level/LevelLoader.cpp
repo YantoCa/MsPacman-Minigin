@@ -4,7 +4,6 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h" 
 #include "GridComponent.h"
-#include "SpawnPointComponent.h"
 
 #include <fstream>
 #include <sstream>

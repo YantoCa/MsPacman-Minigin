@@ -212,12 +212,10 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Game/MsPacman.cpp
   Game/Commands.cpp
 
-  Game/Components/MovementComponent.cpp  #
   Game/Components/FPSComponent.cpp 
-  Game/Components/RotationComponent.cpp 
   Game/Components/PointsComponent.cpp 
   Game/Components/DisplayPointsComponent.cpp
- "Game/Level/LevelLoader.cpp" "Game/Components/GridComponent.cpp" "Game/Components/GridMovementComponent.cpp" "Game/Components/SpawnPointComponent.cpp" "Game/GameManager.cpp")
+ "Game/Level/LevelLoader.cpp" "Game/Components/GridComponent.cpp" "Game/Components/GridMovementComponent.cpp" "Game/GameManager.cpp")
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 
