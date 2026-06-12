@@ -217,13 +217,14 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Game/Components/RotationComponent.cpp 
   Game/Components/PointsComponent.cpp 
   Game/Components/DisplayPointsComponent.cpp
-)
+ "Game/Level/LevelLoader.cpp")
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 
 target_include_directories(${TARGET_NAME} PRIVATE
   ${CMAKE_SOURCE_DIR}/Game/
   ${CMAKE_SOURCE_DIR}/Game/Components
+  ${CMAKE_SOURCE_DIR}/Game/Level
 
   ${CMAKE_SOURCE_DIR}/Data/
 )
