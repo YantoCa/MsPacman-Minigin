@@ -17,7 +17,6 @@
 #include "Components/RenderComponent.h"
 #include "Components/TextComponent.h"
 #include "Components/FPSComponent.h" 
-#include "Components/MovementComponent.h"
 #include "Components/ImGuiComponent.h"
 #include "Components/DisplayPointsComponent.h"
 #include "Components/PointsComponent.h"
