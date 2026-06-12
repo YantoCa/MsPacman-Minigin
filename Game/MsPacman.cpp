@@ -56,10 +56,14 @@ void MsPacman::Initialize() {
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<MoveCommand>(*p1, glm::ivec2{ -1.f, 0.f}), dae::KeyState::OnHold));
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_D, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 1.f, 0.f}), dae::KeyState::OnHold));
 		
+		// Bind player to gamemanager and reset position
 		manager->AddPlayer(p1.get());
 		manager->ResetPlayers();
 		
 		scene.Add(std::move(p1));
+
+
+		// Sceneloader gone into scene
 		scene.Add(std::move(GM)); 
 }
 

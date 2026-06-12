@@ -28,6 +28,9 @@ namespace game {
 	private: 
 		GridComponent* m_pMazeGrid{nullptr};
 		std::vector<dae::GameObject*> m_Players{}; 
+		std::vector<dae::GameObject*> m_Pellets{}; 
+		std::vector<dae::GameObject*> m_Ghosts{}; 
+		std::vector<dae::GameObject*> m_Fruit{}; 
 		
 		// UI seperate from grid, but listens to notifys
 		//int m_Highscore{};
