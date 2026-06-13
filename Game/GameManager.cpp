@@ -57,20 +57,30 @@ namespace game {
 	void GameManager::LoadMaze(const Maze& newMaze) {
 		ClearUpMaze();
 
-		std::string path;
+		std::string csvPath;
+		std::string texturePath;
 
 		switch (newMaze)
 		{
-		case game::Maze::PinkMaze: path = "Data/Levels/Level1.csv";
+		case game::Maze::PinkMaze: 
+			csvPath = "Data/Levels/Level1.csv";
+			texturePath = "Levels/Level1_Background.png";
 			break;
-		case game::Maze::LightBlueMaze: path = "Data/Levels/Level2.csv";
+		case game::Maze::LightBlueMaze: 
+			csvPath = "Data/Levels/Level2.csv";
+			texturePath = "Levels/Level2_Background.png";
 			break;
 		case game::Maze::OrangeMaze:
+			csvPath = "Data/Levels/Level3.csv";
+			texturePath = "Levels/Level3_Background.png";
 			break;
 		default:
 			break;
 		}
-		auto matrix = LevelLoader::ParseCSV(path);
+
+		if (csvPath.empty() && texturePath.empty()) return; // make sure something needs to load
+
+		auto matrix = LevelLoader::ParseCSV(csvPath);
 		if (matrix.empty()) return;
 
 		int totalRows = static_cast<int>(matrix.size());
@@ -79,7 +89,9 @@ namespace game {
 		// Create a gird gameobject
 		auto gridObject = std::make_unique<dae::GameObject>();
 		gridObject->GetTransform().SetWorldPosition(GetOwner()->GetTransform().GetWorldPosition());
+		gridObject->AddComponent<dae::RenderComponent>(texturePath);
 		m_pMazeGrid = gridObject->AddComponent<GridComponent>(totalCols, totalRows, TILE_SIZE);
+		
 
 		for (int r = 0; r < totalRows; ++r) {
 			for (int c = 0; c < totalCols; ++c) {
@@ -229,7 +241,6 @@ namespace game {
 				{
 					auto wall = std::make_unique<dae::GameObject>();
 					wall->GetTransform().SetWorldPosition(centerPos); 
-					wall->AddComponent<dae::RenderComponent>("Tiles/Wall.png");
 
 					m_Walls.push_back(wall.get());
 					m_pActiveScene->Add(std::move(wall));

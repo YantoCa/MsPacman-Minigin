@@ -38,7 +38,7 @@ void MsPacman::Initialize() {
 
 	//// Level loader
 	auto GM = std::make_unique<dae::GameObject>(); 
-	GM->GetTransform().SetWorldPosition(glm::vec3{400.f, 144.f, 0.f});
+	GM->GetTransform().SetWorldPosition(glm::vec3{404.f, 148.f, 0.f});
 	auto* manager = GM->AddComponent<GameManager>(&scene);
 	// level width 224px
 	// level height 288px without upscale

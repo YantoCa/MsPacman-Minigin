@@ -8,9 +8,10 @@ namespace game {
 		Wall = 1,
 		Pellet = 2,
 		PowerPellet = 3,
-		Player1Spawn = 5,
-		Player2Spawn = 6,
-		GhostSpawn = 7
+		Player1Spawn = 4,
+		Player2Spawn = 5,
+		GhostSpawn = 6,
+		WarpTunnel = 7
 	};
 
 	// GameManager
