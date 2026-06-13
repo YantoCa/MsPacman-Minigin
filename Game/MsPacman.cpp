@@ -163,7 +163,7 @@ void MsPacman::SetupSound() {
 	//// Sound
 	auto realAudioSys = std::make_unique<dae::SDLSoundSystem>(); // using sdl
 
-	realAudioSys->LoadSound(0, "Data/Dummy_Sound.mp3");
+	realAudioSys->LoadSound(0, "Data/EatDot.wav");
 
 	auto decoratedSys = std::make_unique<dae::LoggingSoundSystem>(std::move(realAudioSys)); // wrapper 
 
