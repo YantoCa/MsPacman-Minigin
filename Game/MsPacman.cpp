@@ -19,6 +19,7 @@
 #include "Components/FPSComponent.h" 
 #include "Components/ImGuiComponent.h"
 #include "Components/DisplayPointsComponent.h"
+#include "Components/DisplayLivesComponent.h"
 #include "Components/PointsComponent.h"
 #include "Components/BoxColliderComponent.h"
 
@@ -71,15 +72,24 @@ void MsPacman::Initialize() {
 	// UI Score;
 		auto UIScore = std::make_unique<dae::GameObject>();
 		//
-		UIScore->AddComponent<dae::TextComponent>("score : ", font);
+		UIScore->AddComponent<dae::TextComponent>("score : 0", font);
 		auto* pDisplacScoreObs = UIScore->AddComponent<DisplayPointsComponent>();
 		
 		// observe the player points
 		manager->AddObserver(pDisplacScoreObs);
 		scene.Add(std::move(UIScore));
 
+	// UI Health
+		auto UIHealth = std::make_unique<dae::GameObject>();
+		UIHealth->GetTransform().SetLocalPosition(glm::vec3{ 0.f, 40.f, 0.f });
+		UIHealth->AddComponent<dae::TextComponent>("Lives : 3", font);
+		auto* pDisplayhealth = UIHealth->AddComponent<DisplayLivesComponent>();
 
-	// Sceneloader gone into scene
+		// observe the player points
+		manager->AddObserver(pDisplayhealth);
+		scene.Add(std::move(UIHealth));
+
+	// gameManager gone into scene
 	scene.Add(std::move(GM)); 
 }
 

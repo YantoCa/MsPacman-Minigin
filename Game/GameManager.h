@@ -31,6 +31,7 @@ namespace game {
 		void AddGhost(dae::GameObject* pGhost); // could attach player to it also making you control it?
 
 		void NextLevelLogic();
+		int GetLives() const { return m_Lives; }
 	private: 
 		dae::Scene* m_pActiveScene{nullptr};
 
@@ -46,6 +47,9 @@ namespace game {
 		int m_RemainingPellets{0};
 		int m_Level{ 0 };
 
+		const int m_MaxLives{ 3 };
+		int m_Lives{};
+
 		// Maze
 		void LoadMaze(const Maze& newMaze); 
 		void ClearUpMaze();
@@ -55,6 +59,9 @@ namespace game {
 		
 		// Players
 		void ResetPlayers();
+		void PlayerDied();
+
+		// Ghosts
 		void ResetGhosts();
 
 		// 

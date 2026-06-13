@@ -19,6 +19,8 @@ namespace game {
 	GameManager::GameManager(dae::GameObject& owner, dae::Scene* scene)
 		: dae::Component(owner), m_pActiveScene{ scene } {
 		LoadMaze(game::Maze::PinkMaze); // load the starting maze
+
+		m_Lives = m_MaxLives;
 	}
 
 	void GameManager::Update(float) {
@@ -49,6 +51,21 @@ namespace game {
 				if (playerCollider->IsOverlapping(*pelletCollider))
 				{ 
 					pPelletComp->Eat();
+				}
+			}
+
+			// Collision Ghosts
+			for (auto* ghost : m_Ghosts)
+			{
+				if (!ghost || ghost->IsMarkedForDeletion()) continue;
+
+				auto* ghostCollider = ghost->GetComponent<dae::BoxColliderComponent>();
+				if (!ghostCollider) continue;
+
+				if (playerCollider->IsOverlapping(*ghostCollider))
+				{ 
+					PlayerDied();
+					return;  
 				}
 			}
 		}
@@ -314,6 +331,23 @@ namespace game {
 	}
 
 	void GameManager::FinishGame() {
+		ClearUpMaze();
+	}
 
+	void GameManager::PlayerDied() {
+		m_Lives--;
+
+		Notify(*GetOwner(), "LivesChanged"); // UI update
+
+		if (m_Lives <= 0) {
+			std::cout << "Game Over!" << std::endl;
+			FinishGame();
+		}
+		else {
+			std::cout << "Life lost! Remaining: " << m_Lives << std::endl;
+			 
+			ResetPlayers();
+			ResetGhosts();
+		}
 	}
 }
