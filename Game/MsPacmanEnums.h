@@ -26,4 +26,12 @@ namespace game {
 		LightBlueMaze,
 		OrangeMaze
 	};
+
+	// GhostChaseState
+	enum class GhostType {
+		Blinky, 
+		Pinky, 
+		Inky, 
+		Sue
+	};
 }

@@ -63,6 +63,7 @@ namespace game {
 
 		// Ghosts
 		void ResetGhosts();
+		void TriggerGhostsFrightenedMode();
 
 		// 
 		void FinishGame();

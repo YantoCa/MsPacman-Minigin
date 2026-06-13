@@ -12,7 +12,10 @@
 #include "RenderComponent.h"
 #include "PelletComponent.h"
 #include "BoxColliderComponent.h"
-#include "PointsComponent.h"
+#include "FSMComponent.h"
+#include "GhostFrightenedState.h"
+#include "GhostComponent.h"
+#include "GhostChaseState.h"
 #include <iostream>
 
 namespace game {
@@ -51,6 +54,7 @@ namespace game {
 				if (playerCollider->IsOverlapping(*pelletCollider))
 				{ 
 					pPelletComp->Eat();
+					return;
 				}
 			}
 
@@ -64,8 +68,48 @@ namespace game {
 
 				if (playerCollider->IsOverlapping(*ghostCollider))
 				{ 
-					PlayerDied();
-					return;  
+					bool isFrightened = false;
+					if (auto* fsm = ghost->GetComponent<dae::FSMComponent>())
+					{ 
+						if (dynamic_cast<GhostFrightenedState*>(fsm->GetCurrentState()))
+						{
+							isFrightened = true;
+						}
+					}
+
+					if (isFrightened)
+					{   
+						m_MasterScore += 200;  
+						Notify(*GetOwner(), "ScoreChanged"); 
+						 
+						if (auto* fsm = ghost->GetComponent<dae::FSMComponent>())
+						{
+							fsm->ChangeState(std::make_unique<GhostChaseState>(*ghost, this));
+						}
+						 
+						auto& ghostpawns = m_pMazeGrid->GetGhostSpawnPoints();
+						if (!ghostpawns.empty())
+						{ 
+							size_t ghostIdx = 0;
+							for (size_t i = 0; i < m_Ghosts.size(); ++i)
+							{
+								if (m_Ghosts[i] == ghost) { ghostIdx = i; break; }
+							}
+
+							glm::vec3 spawnPos = (ghostIdx < ghostpawns.size()) ? ghostpawns[ghostIdx] : ghostpawns[0];
+							ghost->GetTransform().SetWorldPosition(spawnPos);
+
+							if (auto* pGridMove = ghost->GetComponent<GridMovementComponent>())
+							{
+								pGridMove->SnapToGrid();
+							}
+						}
+					}
+					else
+					{ 
+						PlayerDied();
+						return;
+					}
 				}
 			}
 		}
@@ -133,8 +177,7 @@ namespace game {
 			if (!pPellet) return;
 
 			dae::ServiceLocator::GetSoundSystem().PlaySound(0, 1.f);
-
-			// 3. Update the global game state state
+			 
 			m_MasterScore += pPellet->GetPointValue();
 			m_RemainingPellets--;
 
@@ -147,26 +190,25 @@ namespace game {
 				return;
 			}
 
-			/*if (pPellet->IsPowerPellet())
+			if (pPellet->IsPowerPellet())
 			{
-				TriggerGhostFrightenedMode();
-			}*/
+				TriggerGhostsFrightenedMode();
+			}
 		}
 	}
 
 	void GameManager::ResetMaze() {
 		if (!m_pMazeGrid) return;
 
+		m_RemainingPellets = 0;
 		for (auto* pellet : m_Pellets) {
-			if (pellet) {
-				// reset pellets
+			if (!pellet) continue;
 
+			if (auto* pPelletComp = pellet->GetComponent<game::PelletComponent>()) {
+				pPelletComp->Reset();
 			}
-		}
-		for (auto* fruit : m_Fruit) {
-			if (fruit) {
-				// reset pellets
-			}
+
+			m_RemainingPellets++; 
 		}
 
 		ResetPlayers();
@@ -192,17 +234,20 @@ namespace game {
 	}
 	void GameManager::ResetGhosts() {
 		if (!m_pMazeGrid) return;
-		 
+
 		auto& ghostpawns = m_pMazeGrid->GetGhostSpawnPoints();
+		if (ghostpawns.empty()) return;  
+
 		for (size_t i = 0; i < m_Ghosts.size(); ++i)
 		{
 			if (!m_Ghosts[i]) continue;
-			glm::vec3 spawnPos = (i < ghostpawns.size()) ? ghostpawns[i] : glm::vec3{ 0.0f };
+			 
+			glm::vec3 spawnPos = (i < ghostpawns.size()) ? ghostpawns[i] : ghostpawns[0];
 			m_Ghosts[i]->GetTransform().SetWorldPosition(spawnPos);
 
 			if (auto* pGridMove = m_Ghosts[i]->GetComponent<GridMovementComponent>())
 			{
-				pGridMove->SetGrid(m_pMazeGrid); // update maze
+				pGridMove->SetGrid(m_pMazeGrid);  
 				pGridMove->SnapToGrid();
 			}
 		}
@@ -226,9 +271,36 @@ namespace game {
 
 	// Maze creation helper functions
 	void GameManager::ClearUpMaze() {
+		for (auto* player : m_Players) {
+			if (player) {
+				if (auto* pGridMove = player->GetComponent<GridMovementComponent>()) {
+					pGridMove->SetGrid(nullptr); // Unlink the dying grid
+					pGridMove->SetActive(false); // 🎯 Stop the movement component from updating
+				}
+				if (auto* pRender = player->GetComponent<dae::RenderComponent>()) {
+					pRender->SetActive(false);   // 🎯 Hide the player from the screen
+				}
+			}
+		}
+		m_Players.clear();
+
+		// 2. Clear out pellets and walls
 		for (auto* pellet : m_Pellets) { if (pellet) pellet->Destroy(); }
 		for (auto* wall : m_Walls) { if (wall)    wall->Destroy(); }
-		for (auto* ghost : m_Ghosts) { if (ghost)   ghost->Destroy(); }
+
+		// 3. Detach grid from ghosts and deactivate their components before destroying them
+		for (auto* ghost : m_Ghosts) {
+			if (ghost) {
+				if (auto* pGridMove = ghost->GetComponent<GridMovementComponent>()) {
+					pGridMove->SetGrid(nullptr);
+					pGridMove->SetActive(false);
+				}
+				if (auto* pFsm = ghost->GetComponent<dae::FSMComponent>()) {
+					pFsm->SetActive(false); // Stop the AI state machine from ticking
+				}
+				ghost->Destroy();
+			}
+		}
 		for (auto* fruit : m_Fruit) { if (fruit)   fruit->Destroy(); }
 
 		m_Pellets.clear();
@@ -236,6 +308,7 @@ namespace game {
 		m_Ghosts.clear();
 		m_Fruit.clear();
 
+		// 4. Safely wipe the grid component out
 		if (m_pMazeGrid) {
 			m_pMazeGrid->GetOwner()->Destroy();
 			m_pMazeGrid = nullptr;
@@ -328,6 +401,18 @@ namespace game {
 			FinishGame();
 			break;
 		} 
+	}
+
+	void GameManager::TriggerGhostsFrightenedMode() {
+		for (auto* ghost : m_Ghosts)
+		{
+			if (!ghost || ghost->IsMarkedForDeletion()) continue;
+
+			if (auto* fsm = ghost->GetComponent<dae::FSMComponent>())
+			{ 
+				fsm->ChangeState(std::make_unique<GhostFrightenedState>(*ghost,this));
+			}
+		}
 	}
 
 	void GameManager::FinishGame() {

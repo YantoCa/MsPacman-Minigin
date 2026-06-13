@@ -17,6 +17,9 @@ namespace game
 		void SetDesiredDirection(const glm::ivec2& dir);
 		void SetGrid(GridComponent* pGrid);
 		void SnapToGrid();
+
+		glm::vec2 GetCurrentTile() const { return m_CurrentTile; }
+		glm::vec2 GetCurrentDirection() const { return m_CurrentDirection; }
 	private:
 		GridComponent* m_pGrid;
 		float m_Speed;

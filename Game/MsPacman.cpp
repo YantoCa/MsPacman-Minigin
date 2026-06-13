@@ -23,6 +23,11 @@
 #include "Components/PointsComponent.h"
 #include "Components/BoxColliderComponent.h"
 
+#include "MsPacmanEnums.h"
+#include "FSMComponent.h"
+#include "GhostChaseState.h"
+#include "GhostComponent.h"
+
 #include "LevelLoader.h"
 #include "GridMovementComponent.h"
 #include "GameManager.h"
@@ -75,8 +80,61 @@ void MsPacman::Initialize() {
 		
 		// Bind player to gamemanager and reset position
 		manager->AddPlayer(p1.get());
-		scene.Add(std::move(p1));
 
+	// Ghosts
+		// Blinky
+			auto blinky = std::make_unique<dae::GameObject>();
+			blinky->AddComponent<dae::RenderComponent>("Characters/Blinky.png");
+			blinky->AddComponent<dae::BoxColliderComponent>(8.f, 8.f);
+			blinky->AddComponent<GridMovementComponent>(manager->GetMazeGrid(), 55.0f);
+			blinky->AddComponent<GhostComponent>(GhostType::Blinky, "Characters/Blinky.png", p1.get());
+
+			auto* fsmBlinky = blinky->AddComponent<dae::FSMComponent>();
+			fsmBlinky->ChangeState(std::make_unique<GhostChaseState>(*blinky, manager));
+
+			dae::GameObject* blinkyPtr = blinky.get(); // needded for Inky
+			manager->AddGhost(blinkyPtr);
+			scene.Add(std::move(blinky));
+		// Pinky
+
+			//
+			auto pinky = std::make_unique<dae::GameObject>(); 
+			pinky->AddComponent<dae::RenderComponent>("Characters/Pinky.png");
+			pinky->AddComponent<dae::BoxColliderComponent>(8.f, 8.f);
+			pinky->AddComponent<GridMovementComponent>(manager->GetMazeGrid(), 55.0f);  
+			pinky->AddComponent<GhostComponent>(GhostType::Pinky, "Characters/Pinky.png", p1.get());
+			 
+			auto* fsm = pinky->AddComponent<dae::FSMComponent>();
+			fsm->ChangeState(std::make_unique<GhostChaseState>(*pinky, manager));
+
+			manager->AddGhost(pinky.get());
+			scene.Add(std::move(pinky));
+		// Inky
+			auto inky = std::make_unique<dae::GameObject>();
+			inky->AddComponent<dae::RenderComponent>("Characters/Inky.png");
+			inky->AddComponent<dae::BoxColliderComponent>(8.f, 8.f);
+			inky->AddComponent<GridMovementComponent>(manager->GetMazeGrid(), 55.0f);
+			inky->AddComponent<GhostComponent>(GhostType::Inky, "Characters/Inky.png", p1.get(), blinkyPtr);
+
+			auto* fsmInky = inky->AddComponent<dae::FSMComponent>(); 
+			fsmInky->ChangeState(std::make_unique<GhostChaseState>(*inky, manager));
+
+			manager->AddGhost(inky.get());
+			scene.Add(std::move(inky));
+		// Sue
+			auto sue = std::make_unique<dae::GameObject>();
+			sue->AddComponent<dae::RenderComponent>("Characters/Sue.png");
+			sue->AddComponent<dae::BoxColliderComponent>(8.f, 8.f);
+			sue->AddComponent<GridMovementComponent>(manager->GetMazeGrid(), 55.0f);
+			sue->AddComponent<GhostComponent>(GhostType::Sue, "Characters/Sue.png", p1.get());
+
+			auto* fsmSue = sue->AddComponent<dae::FSMComponent>();
+			fsmSue->ChangeState(std::make_unique<GhostChaseState>(*sue, manager));
+
+			manager->AddGhost(sue.get());
+			scene.Add(std::move(sue));
+
+		scene.Add(std::move(p1));
 	// UI Score;
 		auto UIScore = std::make_unique<dae::GameObject>();
 		//

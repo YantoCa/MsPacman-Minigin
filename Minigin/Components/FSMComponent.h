@@ -15,6 +15,7 @@ namespace dae
 		void Update(float deltaTime) override;
 		 
 		void ChangeState(std::unique_ptr<State> pNewState);
+		State* GetCurrentState() const { return m_pCurrentState.get(); }
 
 		FSMComponent(const FSMComponent& other) = delete;
 		FSMComponent(FSMComponent&& other) = delete;
