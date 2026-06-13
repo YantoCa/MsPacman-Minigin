@@ -31,4 +31,12 @@ namespace game {
     private:
         GameManager& m_Object;
     };
+
+    // MuteCommand
+    class MuteCommand final : public dae::Command {
+    public:
+        MuteCommand() = default;
+
+        void Execute() override;
+    };
 }

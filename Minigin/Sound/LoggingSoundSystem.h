@@ -11,7 +11,7 @@ namespace dae {
 
 		void PlaySound(const soundId id, float volume) override;
 		void StopAll() override;
-
+		void ToggleMute() override;
 	private:
 		std::unique_ptr<SoundSystem> m_pRealSoundSystem;
 	};

@@ -12,7 +12,7 @@ namespace dae {
 		void StopAll() override;
 
 		void LoadSound(const soundId id, const std::string& path);
-		void ToggleMute();
+		void ToggleMute() override; 
 	private:
 		class SoundImpl; // pimpl
 		std::unique_ptr<SoundImpl> m_pImpl;

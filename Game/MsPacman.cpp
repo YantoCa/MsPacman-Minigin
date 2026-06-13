@@ -59,11 +59,19 @@ void MsPacman::Initialize() {
 		scene.Add(std::move(p1Visual));
 
 		// Bind bindings to player 1
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<SkipLevelCommand>(*manager), dae::KeyState::OnPress));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_F1, std::make_unique<SkipLevelCommand>(*manager), dae::KeyState::OnPress));
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_F2, std::make_unique<MuteCommand>(), dae::KeyState::OnPress)); // mute
+
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, -1.f}), dae::KeyState::OnHold));
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_S, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, 1.f}), dae::KeyState::OnHold));
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<MoveCommand>(*p1, glm::ivec2{ -1.f, 0.f}), dae::KeyState::OnHold));
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_D, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 1.f, 0.f}), dae::KeyState::OnHold));
+
+		auto& controller0 = input.AddController(0); 
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_UP, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, -1.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_DOWN, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, 1.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_LEFT, std::make_unique<MoveCommand>(*p1, glm::ivec2{ -1.f, 0.f }), dae::KeyState::OnHold));
+		input.AddBinding(std::make_unique<dae::ControllerBinding>(controller0, dae::Gamepad::ControllerButton::GAMEPAD_DPAD_RIGHT, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 1.f, 0.f }), dae::KeyState::OnHold));
 		
 		// Bind player to gamemanager and reset position
 		manager->AddPlayer(p1.get());
@@ -82,10 +90,10 @@ void MsPacman::Initialize() {
 	// UI Health
 		auto UIHealth = std::make_unique<dae::GameObject>();
 		UIHealth->GetTransform().SetLocalPosition(glm::vec3{ 0.f, 40.f, 0.f });
-		UIHealth->AddComponent<dae::TextComponent>("Lives : 3", font);
+		UIHealth->AddComponent<dae::TextComponent>("Lives : 4", font);
 		auto* pDisplayhealth = UIHealth->AddComponent<DisplayLivesComponent>();
 
-		// observe the player points
+		// observe the player health
 		manager->AddObserver(pDisplayhealth);
 		scene.Add(std::move(UIHealth));
 

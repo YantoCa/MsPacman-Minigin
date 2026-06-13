@@ -17,4 +17,8 @@ namespace dae {
         std::cout << "[Audio Logs] Intercepted Request -> Stop All Sound tracks.\n";
         m_pRealSoundSystem->StopAll();
     }
+
+    void LoggingSoundSystem::ToggleMute() {
+        m_pRealSoundSystem->ToggleMute();
+    }
 }

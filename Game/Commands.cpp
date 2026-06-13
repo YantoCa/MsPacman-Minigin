@@ -29,4 +29,9 @@ namespace game {
             movement->SetDesiredDirection(m_Direction);
         }
     }
+
+    // Mute Command
+    void MuteCommand::Execute(){
+        dae::ServiceLocator::GetSoundSystem().ToggleMute();
+    };
 }

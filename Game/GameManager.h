@@ -47,7 +47,7 @@ namespace game {
 		int m_RemainingPellets{0};
 		int m_Level{ 0 };
 
-		const int m_MaxLives{ 3 };
+		const int m_MaxLives{ 4 };
 		int m_Lives{};
 
 		// Maze
