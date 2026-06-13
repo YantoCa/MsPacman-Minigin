@@ -376,6 +376,8 @@ namespace game {
 				case TileType::GhostSpawn:
 					m_pMazeGrid->AddGhostSpawnPoint(centerPos);
 					break;
+				default:
+					break;
 				}
 			}
 		}
