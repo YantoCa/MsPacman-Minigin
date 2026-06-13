@@ -29,6 +29,11 @@ namespace dae {
             if(component->IsActive())
                 component->Update(deltaTime);
         }
+        for (const auto& child : m_Childeren)
+        {
+            if (child && !child->IsMarkedForDeletion())
+                child->Update(deltaTime);
+        }
     }
 
     void GameObject::LateUpdate(float deltaTime) {
@@ -36,6 +41,12 @@ namespace dae {
         {
             if (component->IsActive())
                 component->LateUpdate(deltaTime);
+        }
+
+        for (const auto& child : m_Childeren)
+        { 
+            if(child && !child->IsMarkedForDeletion())
+                child->LateUpdate(deltaTime);
         }
     }
 
@@ -46,6 +57,11 @@ namespace dae {
             if (component->IsActive())
                 component->FixedUpdate();
         }
+        for (const auto& child : m_Childeren)
+        {
+            if (child && !child->IsMarkedForDeletion())
+                child->FixedUpdate();
+        }
     }
 
     void GameObject::Render() const
@@ -54,6 +70,12 @@ namespace dae {
         {
             if (component->IsActive())
                 component->Render();
+        }
+
+        for (const auto& child : m_Childeren)
+        {
+            if (child && !child->IsMarkedForDeletion())
+                child->Render();
         }
     }
 

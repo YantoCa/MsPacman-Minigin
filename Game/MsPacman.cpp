@@ -47,10 +47,15 @@ void MsPacman::Initialize() {
 
 	// Player 1 (Keyboard dummy)
 		auto p1 = std::make_unique<dae::GameObject>();
-		p1->AddComponent<dae::RenderComponent>("Characters/MsPacman.png");
 		p1->AddComponent<dae::BoxColliderComponent>(8.f,8.f); 
 		p1->AddComponent<GridMovementComponent>(manager->GetMazeGrid()); 
 
+		// offset visuals
+		auto p1Visual = std::make_unique<dae::GameObject>();
+		p1Visual->AddComponent<dae::RenderComponent>("Characters/MsPacman.png");
+		p1Visual->GetTransform().SetLocalPosition(-4.f, -4.f, 0.f);
+		p1Visual->SetParent(p1.get(), false); // should also empty out p1Visual 
+		scene.Add(std::move(p1Visual));
 
 		// Bind bindings to player 1
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<SkipLevelCommand>(*manager), dae::KeyState::OnPress));
