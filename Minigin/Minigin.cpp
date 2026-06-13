@@ -84,7 +84,7 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath, std::unique_ptr<Gam
 	}
 
 	g_window = SDL_CreateWindow(
-		"Programming 4 assignment",
+		"Prog4 Exam - Ms Pacman",
 		1024,
 		576,
 		SDL_WINDOW_OPENGL

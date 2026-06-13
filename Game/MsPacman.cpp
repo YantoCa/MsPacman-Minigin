@@ -37,8 +37,13 @@ void MsPacman::Initialize() {
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
 	//// Level loader
-	auto GM = std::make_unique<dae::GameObject>();
+	auto GM = std::make_unique<dae::GameObject>(); 
+	GM->GetTransform().SetWorldPosition(glm::vec3{400.f, 144.f, 0.f});
 	auto* manager = GM->AddComponent<GameManager>(&scene);
+	// level width 224px
+	// level height 288px without upscale
+	// window		1024,
+	//  window 576,				
 
 	// Player 1 (Keyboard dummy)
 		auto p1 = std::make_unique<dae::GameObject>();

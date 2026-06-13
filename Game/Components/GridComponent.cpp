@@ -1,4 +1,5 @@
 #include "GridComponent.h"
+#include "GameObject.h"
 
 using namespace game;
 
@@ -26,15 +27,22 @@ bool GridComponent::IsWall(int column, int row) const {
 }
 
 glm::ivec2 GridComponent::WorldToGrid(const glm::vec3& worldPos) const {
-	return {
-		static_cast<int>(worldPos.x / m_TileSize),
-		static_cast<int>(worldPos.y / m_TileSize)
-	};
+	glm::vec3 gridOffset = GetOwner()->GetTransform().GetWorldPosition();
+	 
+	glm::vec3 localPos = worldPos - gridOffset;
+
+	int column = static_cast<int>(localPos.x / m_TileSize);
+	int row = static_cast<int>(localPos.y / m_TileSize);
+
+	return glm::ivec2(column, row);
 }
-glm::vec3 GridComponent::GridToWorldCenter(int column, int row) const {
-	float x = (column * m_TileSize) + (m_TileSize / 2.0f);
-	float y = (row * m_TileSize) + (m_TileSize / 2.0f);
-	return { x, y, 0.0f };
+glm::vec3 GridComponent::GridToWorldCenter(int column, int row) const { 
+	float localX = column * m_TileSize + (m_TileSize / 2.f);
+	float localY = row * m_TileSize + (m_TileSize / 2.f);
+	 
+	glm::vec3 gridOffset = GetOwner()->GetTransform().GetWorldPosition();
+	 
+	return gridOffset + glm::vec3(localX, localY, 0.f);
 }
 
 float GridComponent::GetTileSize() const { return m_TileSize; }

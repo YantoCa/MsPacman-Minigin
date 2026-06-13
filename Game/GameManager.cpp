@@ -78,6 +78,7 @@ namespace game {
 
 		// Create a gird gameobject
 		auto gridObject = std::make_unique<dae::GameObject>();
+		gridObject->GetTransform().SetWorldPosition(GetOwner()->GetTransform().GetWorldPosition());
 		m_pMazeGrid = gridObject->AddComponent<GridComponent>(totalCols, totalRows, TILE_SIZE);
 
 		for (int r = 0; r < totalRows; ++r) {
