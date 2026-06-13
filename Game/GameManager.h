@@ -31,7 +31,7 @@ namespace game {
 
 		int GetMasterScore() const { return m_MasterScore; }
 	private: 
-		dae::Scene* m_ActiveScene{nullptr};
+		dae::Scene* m_pActiveScene{nullptr};
 
 		std::vector<dae::GameObject*> m_Players{}; 
 		std::vector<dae::GameObject*> m_Ghosts{}; 
@@ -43,16 +43,21 @@ namespace game {
 
 		int m_MasterScore{0};
 		int m_RemainingPellets{0};
+		int m_Level{ 0 };
 
 		// Maze
 		void LoadMaze(const Maze& newMaze); 
 		void ClearUpMaze();
 		void CreateMazeGameObjects(int totalRows, int totalCols);
+		void NextLevelLogic();
 		
 		void ResetMaze(); // Players, ghost, pellets everything (when maze completed or started)
 		
 		// Players
 		void ResetPlayers();
 		void ResetGhosts();
+
+		// 
+		void FinishGame();
 	};
 }

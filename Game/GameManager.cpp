@@ -16,7 +16,8 @@
 #include <iostream>
 
 namespace game {
-	GameManager::GameManager(dae::GameObject& owner, dae::Scene* scene) : dae::Component(owner), m_ActiveScene{scene} { 
+	GameManager::GameManager(dae::GameObject& owner, dae::Scene* scene)
+		: dae::Component(owner), m_pActiveScene{ scene } {
 		LoadMaze(game::Maze::PinkMaze); // load the starting maze
 	}
 
@@ -85,7 +86,7 @@ namespace game {
 			}
 		}
 
-		m_ActiveScene->Add(std::move(gridObject));
+		m_pActiveScene->Add(std::move(gridObject));
 
 		CreateMazeGameObjects(totalRows, totalCols);
 
@@ -101,7 +102,7 @@ namespace game {
 			auto* pPellet = object.GetComponent<game::PelletComponent>();
 			if (!pPellet) return;
 
-			//dae::ServiceLocator::GetSoundSystem().PlaySound("Data/Audio/Chomp.mp3", 100);
+			dae::ServiceLocator::GetSoundSystem().PlaySound(0, 1.f);
 
 			// 3. Update the global game state state
 			m_MasterScore += pPellet->GetPointValue();
@@ -109,12 +110,12 @@ namespace game {
 
 			// UI Notifys
 			Notify(*GetOwner(), "ScoreChanged");
-
-	/*		if (m_RemainingPellets <= 0)
+			 
+			if (m_RemainingPellets <= 0)
 			{
-				this->MazeTransition(Maze::LightBlueMaze, *m_pActiveScene);
+				NextLevelLogic();
 				return;
-			}*/
+			}
 
 			/*if (pPellet->IsPowerPellet())
 			{
@@ -213,6 +214,8 @@ namespace game {
 
 	void GameManager::CreateMazeGameObjects(int totalRows, int totalCols) {
 		if (!m_pMazeGrid) return;
+		
+		m_RemainingPellets = 0; // reset
 
 		for (int r = 0; r < totalRows; ++r) {
 			for (int c = 0; c < totalCols; ++c) {
@@ -224,37 +227,41 @@ namespace game {
 				case TileType::Wall: // 8x8
 				{
 					auto wall = std::make_unique<dae::GameObject>();
-					wall->GetTransform().SetWorldPosition(centerPos);
+					wall->GetTransform().SetWorldPosition(centerPos); 
 					wall->AddComponent<dae::RenderComponent>("Tiles/Wall.png");
 
 					m_Walls.push_back(wall.get());
-					m_ActiveScene->Add(std::move(wall));
+					m_pActiveScene->Add(std::move(wall));
 				}
 				break;
 
 				case TileType::Pellet: // 4x4
 				{
 					auto dot = std::make_unique<dae::GameObject>();
-					dot->GetTransform().SetWorldPosition(centerPos);
+					dot->GetTransform().SetWorldPosition(centerPos); 
 					dot->AddComponent<dae::RenderComponent>("Tiles/Pellet.png");
 					dot->AddComponent<dae::BoxColliderComponent>(4.f, 4.f);
 					dot->AddComponent<PelletComponent>(10, false)->AddObserver(this);
 
 					m_Pellets.push_back(dot.get()); 
-					m_ActiveScene->Add(std::move(dot));
+					m_pActiveScene->Add(std::move(dot));
+
+					m_RemainingPellets++;
 				}
 				break;
 
 				case TileType::PowerPellet: // 8x8
 				{
 					auto powerPellet = std::make_unique<dae::GameObject>();
-					powerPellet->GetTransform().SetWorldPosition(centerPos);
+					powerPellet->GetTransform().SetWorldPosition(centerPos); 
 					powerPellet->AddComponent<dae::RenderComponent>("Tiles/PowerPellet.png");
 					powerPellet->AddComponent<dae::BoxColliderComponent>(8.f, 8.f);
 					powerPellet->AddComponent<PelletComponent>(50, true)->AddObserver(this);
 
 					m_Pellets.push_back(powerPellet.get());
-					m_ActiveScene->Add(std::move(powerPellet));
+					m_pActiveScene->Add(std::move(powerPellet));
+
+					m_RemainingPellets++;
 				}
 				break;
 
@@ -269,5 +276,32 @@ namespace game {
 				}
 			}
 		}
+	}
+
+	void GameManager::NextLevelLogic() {
+		m_Level++;
+
+		switch (m_Level) {
+		case 0:
+			std::cout << "Loading PINK maze..." << std::endl;
+			LoadMaze(Maze::PinkMaze);
+			break;
+		case 1:
+			std::cout << "Loading LIGHT BLUE maze..." << std::endl;
+			LoadMaze(Maze::LightBlueMaze);
+			break;
+		case 2:
+			std::cout << "Loading ORANGE maze..." << std::endl;
+			LoadMaze(Maze::OrangeMaze);
+			break;
+		case 3:		
+		default:
+			FinishGame();
+			break;
+		} 
+	}
+
+	void GameManager::FinishGame() {
+
 	}
 }
