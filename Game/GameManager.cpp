@@ -4,16 +4,25 @@
 
 #include "LevelLoader.h"
 #include "Scene.h"
+#include "Events.h"
+#include "ServiceLocator.h"
 
 //
 #include "GridMovementComponent.h"
 #include "RenderComponent.h"
 #include "PelletComponent.h"
 #include "BoxColliderComponent.h"
+#include "PointsComponent.h"
 #include <iostream>
 
 namespace game {
-	GameManager::GameManager(dae::GameObject& owner) : dae::Component(owner) { }
+	GameManager::GameManager(dae::GameObject& owner, dae::Scene* scene) : dae::Component(owner), m_ActiveScene{scene} { 
+		LoadMaze(game::Maze::PinkMaze); // load the starting maze
+	}
+
+	void GameManager::Update(float) {
+
+	}
 
 	// Colliders
 	void GameManager::LateUpdate(float) { // happens after Movement has been updated
@@ -24,6 +33,7 @@ namespace game {
 			auto* playerCollider = player->GetComponent<dae::BoxColliderComponent>();
 			if (!playerCollider) continue;  
 			 
+			// Collision Pellets
 			for (auto* pellet : m_Pellets)
 			{
 				if (!pellet) continue;
@@ -43,7 +53,7 @@ namespace game {
 		}
 	}
 
-	void GameManager::MazeTransition(const Maze& newMaze, dae::Scene& currentScene) {
+	void GameManager::LoadMaze(const Maze& newMaze) {
 		ClearUpMaze();
 
 		std::string path;
@@ -74,9 +84,10 @@ namespace game {
 				m_pMazeGrid->SetTile(c, r, matrix[r][c]);
 			}
 		}
-		currentScene.Add(std::move(gridObject));
 
-		CreateMazeGameObjects(totalRows, totalCols, currentScene);
+		m_ActiveScene->Add(std::move(gridObject));
+
+		CreateMazeGameObjects(totalRows, totalCols);
 
 		ResetPlayers();
 		ResetGhosts();
@@ -85,8 +96,31 @@ namespace game {
 	GridComponent* GameManager::GetMazeGrid() const { return m_pMazeGrid; }
 
 	void GameManager::OnNotify(const dae::GameObject& object, const std::string& event) {
-		object;
-		event;
+		// Pellet eaten event
+		if (event == game::Event::PelletEaten) {
+			auto* pPellet = object.GetComponent<game::PelletComponent>();
+			if (!pPellet) return;
+
+			//dae::ServiceLocator::GetSoundSystem().PlaySound("Data/Audio/Chomp.mp3", 100);
+
+			// 3. Update the global game state state
+			m_MasterScore += pPellet->GetPointValue();
+			m_RemainingPellets--;
+
+			// UI Notifys
+			Notify(*GetOwner(), "ScoreChanged");
+
+	/*		if (m_RemainingPellets <= 0)
+			{
+				this->MazeTransition(Maze::LightBlueMaze, *m_pActiveScene);
+				return;
+			}*/
+
+			/*if (pPellet->IsPowerPellet())
+			{
+				TriggerGhostFrightenedMode();
+			}*/
+		}
 	}
 
 	void GameManager::ResetMaze() {
@@ -177,7 +211,7 @@ namespace game {
 		}
 	}
 
-	void GameManager::CreateMazeGameObjects(int totalRows, int totalCols, dae::Scene& currentScene) {
+	void GameManager::CreateMazeGameObjects(int totalRows, int totalCols) {
 		if (!m_pMazeGrid) return;
 
 		for (int r = 0; r < totalRows; ++r) {
@@ -194,7 +228,7 @@ namespace game {
 					wall->AddComponent<dae::RenderComponent>("Tiles/Wall.png");
 
 					m_Walls.push_back(wall.get());
-					currentScene.Add(std::move(wall));
+					m_ActiveScene->Add(std::move(wall));
 				}
 				break;
 
@@ -207,7 +241,7 @@ namespace game {
 					dot->AddComponent<PelletComponent>(10, false)->AddObserver(this);
 
 					m_Pellets.push_back(dot.get()); 
-					currentScene.Add(std::move(dot));
+					m_ActiveScene->Add(std::move(dot));
 				}
 				break;
 
@@ -217,10 +251,10 @@ namespace game {
 					powerPellet->GetTransform().SetWorldPosition(centerPos);
 					powerPellet->AddComponent<dae::RenderComponent>("Tiles/PowerPellet.png");
 					powerPellet->AddComponent<dae::BoxColliderComponent>(8.f, 8.f);
-					powerPellet->AddComponent<PelletComponent>(10, true)->AddObserver(this);
+					powerPellet->AddComponent<PelletComponent>(50, true)->AddObserver(this);
 
 					m_Pellets.push_back(powerPellet.get());
-					currentScene.Add(std::move(powerPellet));
+					m_ActiveScene->Add(std::move(powerPellet));
 				}
 				break;
 

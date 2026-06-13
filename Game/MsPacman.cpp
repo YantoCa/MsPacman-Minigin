@@ -38,8 +38,7 @@ void MsPacman::Initialize() {
 
 	//// Level loader
 	auto GM = std::make_unique<dae::GameObject>();
-	auto* manager = GM->AddComponent<GameManager>();
-	manager->MazeTransition(Maze::PinkMaze, scene); 
+	auto* manager = GM->AddComponent<GameManager>(&scene);
 
 	// Player 1 (Keyboard dummy)
 		auto p1 = std::make_unique<dae::GameObject>();
@@ -59,12 +58,21 @@ void MsPacman::Initialize() {
 		
 		// Bind player to gamemanager and reset position
 		manager->AddPlayer(p1.get());
-		
 		scene.Add(std::move(p1));
 
+	// UI Score;
+		auto UIScore = std::make_unique<dae::GameObject>();
+		//
+		UIScore->AddComponent<dae::TextComponent>("score : ", font);
+		auto* pDisplacScoreObs = UIScore->AddComponent<DisplayPointsComponent>();
+		
+		// observe the player points
+		manager->AddObserver(pDisplacScoreObs);
+		scene.Add(std::move(UIScore));
 
-		// Sceneloader gone into scene
-		scene.Add(std::move(GM)); 
+
+	// Sceneloader gone into scene
+	scene.Add(std::move(GM)); 
 }
 
 void MsPacman::SetupSound() {
