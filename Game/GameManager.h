@@ -52,7 +52,7 @@ namespace game {
 
 		// Maze
 		void LoadMaze(const Maze& newMaze); 
-		void ClearUpMaze();
+		void ClearUpMaze(bool isGameOver = false);
 		void CreateMazeGameObjects(int totalRows, int totalCols);
 		
 		void ResetMaze(); // Players, ghost, pellets everything (when maze completed or started)

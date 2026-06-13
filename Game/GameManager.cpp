@@ -270,45 +270,46 @@ namespace game {
 
 
 	// Maze creation helper functions
-	void GameManager::ClearUpMaze() {
+	void GameManager::ClearUpMaze(bool isGameOver) {
 		for (auto* player : m_Players) {
 			if (player) {
 				if (auto* pGridMove = player->GetComponent<GridMovementComponent>()) {
-					pGridMove->SetGrid(nullptr); // Unlink the dying grid
-					pGridMove->SetActive(false); // 🎯 Stop the movement component from updating
+					pGridMove->SetGrid(nullptr);  
+					if (isGameOver) pGridMove->SetActive(false);
 				}
-				if (auto* pRender = player->GetComponent<dae::RenderComponent>()) {
-					pRender->SetActive(false);   // 🎯 Hide the player from the screen
+				if (isGameOver) {
+					if (auto* pRender = player->GetComponent<dae::RenderComponent>()) {
+						pRender->SetActive(false);
+					}
 				}
 			}
 		}
-		m_Players.clear();
-
-		// 2. Clear out pellets and walls
+		if (isGameOver) m_Players.clear();
+		 
 		for (auto* pellet : m_Pellets) { if (pellet) pellet->Destroy(); }
 		for (auto* wall : m_Walls) { if (wall)    wall->Destroy(); }
-
-		// 3. Detach grid from ghosts and deactivate their components before destroying them
-		for (auto* ghost : m_Ghosts) {
-			if (ghost) {
-				if (auto* pGridMove = ghost->GetComponent<GridMovementComponent>()) {
-					pGridMove->SetGrid(nullptr);
-					pGridMove->SetActive(false);
-				}
-				if (auto* pFsm = ghost->GetComponent<dae::FSMComponent>()) {
-					pFsm->SetActive(false); // Stop the AI state machine from ticking
-				}
-				ghost->Destroy();
-			}
-		}
 		for (auto* fruit : m_Fruit) { if (fruit)   fruit->Destroy(); }
 
 		m_Pellets.clear();
 		m_Walls.clear();
-		m_Ghosts.clear();
 		m_Fruit.clear();
-
-		// 4. Safely wipe the grid component out
+		 
+		for (auto* ghost : m_Ghosts) {
+			if (ghost) {
+				if (auto* pGridMove = ghost->GetComponent<GridMovementComponent>()) {
+					pGridMove->SetGrid(nullptr);
+					if (isGameOver) pGridMove->SetActive(false);
+				}
+				if (isGameOver) {
+					if (auto* pFsm = ghost->GetComponent<dae::FSMComponent>()) {
+						pFsm->SetActive(false);
+					}
+					ghost->Destroy();  
+				}
+			}
+		}
+		if (isGameOver) m_Ghosts.clear();
+		 
 		if (m_pMazeGrid) {
 			m_pMazeGrid->GetOwner()->Destroy();
 			m_pMazeGrid = nullptr;
@@ -416,7 +417,7 @@ namespace game {
 	}
 
 	void GameManager::FinishGame() {
-		ClearUpMaze();
+		ClearUpMaze(true);
 	}
 
 	void GameManager::PlayerDied() {
