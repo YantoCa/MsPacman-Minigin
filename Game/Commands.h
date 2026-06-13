@@ -7,6 +7,7 @@
 
 // Iterations of Command
 namespace game { 
+    // MoveCommand
     class MoveCommand final : public dae::Command {
     public:
         MoveCommand(dae::GameObject& object, const glm::ivec2& direction);
@@ -19,15 +20,15 @@ namespace game {
         glm::ivec2 m_Direction;
     };
 
-    // delete seperate
-    class AddPointsCommand final : public dae::Command
+    // SkipLevelCommand
+    class GameManager;
+    class SkipLevelCommand final : public dae::Command
     {
     public:
-        AddPointsCommand(dae::GameObject& player, int points);
+        SkipLevelCommand(GameManager& player);
 
         void Execute() override;
     private:
-        dae::GameObject & m_Player;
-        int m_Points;
+        GameManager& m_Object;
     };
 }

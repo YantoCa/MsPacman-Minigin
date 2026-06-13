@@ -25,11 +25,12 @@ namespace game {
 		void OnNotify(const dae::GameObject& object, const std::string& event) override;
 
 		GridComponent* GetMazeGrid() const; 
+		int GetMasterScore() const { return m_MasterScore; }
  
 		void AddPlayer(dae::GameObject* pPlayer);
 		void AddGhost(dae::GameObject* pGhost); // could attach player to it also making you control it?
 
-		int GetMasterScore() const { return m_MasterScore; }
+		void NextLevelLogic();
 	private: 
 		dae::Scene* m_pActiveScene{nullptr};
 
@@ -49,7 +50,6 @@ namespace game {
 		void LoadMaze(const Maze& newMaze); 
 		void ClearUpMaze();
 		void CreateMazeGameObjects(int totalRows, int totalCols);
-		void NextLevelLogic();
 		
 		void ResetMaze(); // Players, ghost, pellets everything (when maze completed or started)
 		

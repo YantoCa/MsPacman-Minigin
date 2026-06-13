@@ -48,7 +48,7 @@ void MsPacman::Initialize() {
 
 
 		// Bind bindings to player 1
-		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<AddPointsCommand>(*p1, 1), dae::KeyState::OnPress)); 
+		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_SPACE, std::make_unique<SkipLevelCommand>(*manager), dae::KeyState::OnPress));
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_W, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, -1.f}), dae::KeyState::OnHold));
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_S, std::make_unique<MoveCommand>(*p1, glm::ivec2{ 0.f, 1.f}), dae::KeyState::OnHold));
 		input.AddBinding(std::make_unique<dae::KeyboardBinding>(SDL_SCANCODE_A, std::make_unique<MoveCommand>(*p1, glm::ivec2{ -1.f, 0.f}), dae::KeyState::OnHold));

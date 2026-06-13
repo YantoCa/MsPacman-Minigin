@@ -1,25 +1,19 @@
 #include "Commands.h"
 
 #include "GameObject.h"
-#include "Components/PointsComponent.h"
+#include "GameManager.h"
 #include "Components/GridMovementComponent.h"
 
 #include "ServiceLocator.h"
  
 namespace game {
-    // Add Points Command
-    AddPointsCommand::AddPointsCommand(dae::GameObject& player, int points)
-        : m_Player(player), m_Points(points) {
+    // SkipLevelCommand Command
+    SkipLevelCommand::SkipLevelCommand(GameManager& object)
+        : m_Object(object) {
     }
 
-    void AddPointsCommand::Execute() {
-        auto points = m_Player.GetComponent<PointsComponent>();
-        if (points)
-        {
-            points->AddPoints(m_Points);
-
-            dae::ServiceLocator::GetSoundSystem().PlaySound(0, 0.3f);
-        }
+    void SkipLevelCommand::Execute() { 
+        m_Object.NextLevelLogic();
     }
 
     // MoveCommand 
